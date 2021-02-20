@@ -1,28 +1,50 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header/>
+    <Planner/>
+    <Error/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Error from "./components/Error";
+import Header from "./components/Header";
+import Planner from "./components/Planner";
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
+    Error, Header, Planner
+  },
+  methods: {
   }
-}
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+<style lang="scss">
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  color: #333;
+  background: #ccd3c7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  font: 400 1em/1.2 "Nunito", sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+#app {
+  padding: 0;
+}
+h1 {
+  font: 700 2.25em/1.2 "Fredoka One", sans-serif;
+  letter-spacing: .03em;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 </style>
