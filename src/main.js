@@ -5,7 +5,7 @@ import router from "./router";
 import { Auth0Plugin } from "./auth";
 import { domain, clientId } from "../auth_config.json";
 
-Vue.config.productionTip = false;
+//Vue.config.productionTip = false;
 
 Vue.use(Auth0Plugin, {
   domain,

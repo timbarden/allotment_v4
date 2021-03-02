@@ -19,13 +19,13 @@
         methods: {
             // Log the user in
             login() {
-            this.$auth.loginWithRedirect();
+                this.$auth.loginWithRedirect();
             },
             // Log the user out
             logout() {
-            this.$auth.logout({
-                returnTo: window.location.origin
-            });
+                this.$auth.logout({
+                    returnTo: window.location.origin
+                });
             }
         }
     }

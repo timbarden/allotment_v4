@@ -1,144 +1,160 @@
 <template>
   <div>
-  
-
     <div class="planner">
-        <header class="planner__header">
-          <h1>Allotment Diary</h1>
+      <header class="planner__header">
+        <h1>Allotment Diary</h1>
 
-          <button v-if="$auth.isAuthenticated" class="btn--sq" @click="itemShow()">
-            <img src="../assets/create-outline.svg" alt="Create" />
-          </button>
-        </header>
-        
-        <ul class="planner__list" v-if="$auth.isAuthenticated">  
-          <GrowItem 
-            v-for="item in sortList()" 
-            :key="item.id" 
-            :name="item.name"
-            :entries="item.entries" 
-            :style="{ 'border-color': item.color }"
-            @itemShow="itemShow(item.id)"
-            @itemDelete="itemDelete(item.id)"
-          />
-        </ul>
-        
-      </div>
+        <button
+          v-if="$auth.isAuthenticated"
+          class="btn--sq"
+          @click="itemShow()"
+        >
+          <img src="../assets/create-outline.svg" alt="Create" />
+        </button>
+      </header>
 
-      <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
-        <div class="item__box" :class="{ entryactive: blnEntryOpen }">
-          <form class="item__box__form" action="" :style="{ 'border-color': activeItem.color }" @submit.prevent>
-            <div class="item__box__form__header">
-              <input class="item__box__form__header__name" type="text" name="name" v-model="activeItem['name']" placeholder="Item name" />
-              <input type="color" name="color" v-model="activeItem['color']" />
-            </div>
-            <div class="item__box__form__main">
-              <select name="type" v-model="activeItem['type']">
-                <option value="" disabled>Type:</option>
-                <option v-for="(name, index) in arrGroups" :key="index" :value="name">{{ name }}</option>
-              </select>
+      <ul class="planner__list" v-if="$auth.isAuthenticated">
+        <GrowItem
+          v-for="item in sortList"
+          :key="item.id"
+          :name="item.name"
+          :entries="item.entries"
+          :style="{ 'border-color': item.color }"
+          @itemShow="itemShow(item.id)"
+          @itemDelete="itemDelete(item.id)"
+        />
+      </ul>
+    </div>
+
+    <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
+      <div class="item__box" :class="{ entryactive: blnEntryOpen }">
+        <form
+          class="item__box__form"
+          action=""
+          :style="{ 'border-color': activeItem.color }"
+          @submit.prevent
+        >
+          <div class="item__box__form__header">
+            <input
+              class="item__box__form__header__name"
+              type="text"
+              name="name"
+              v-model="activeItem['name']"
+              placeholder="Item name"
+            />
+            <input type="color" name="color" v-model="activeItem['color']" />
+          </div>
+          <div class="item__box__form__main">
+            <select name="type" v-model="activeItem['type']">
+              <option value="" disabled>Type:</option>
+              <option
+                v-for="(name, index) in arrGroups"
+                :key="index"
+                :value="name"
+                >{{ name }}</option
+              >
+            </select>
+          </div>
+        </form>
+        <div class="item__box__main">
+          <div class="item__entries">
+            <header class="item__entries__header">
+              <h3>Entries</h3>
+              <button @click="entryShow()">Add entry</button>
+            </header>
+            <ul class="item__entries__list">
+              <li v-for="entry in sortEntries" :key="entry.id">
+                <div>
+                  <span
+                    >{{ formatDate(entry.sowdate) }}
+                    <span v-if="entry.harvestdate">-</span>
+                    {{ formatDate(entry.harvestdate) }}</span
+                  >
+                  <span v-if="entry.sowdate && entry.harvestdate">{{
+                    dateDifference(entry.sowdate, entry.harvestdate)
+                  }}</span>
+                  <p>{{ entry.notes }}</p>
+                </div>
+                <div class="item__entries__list__btns">
+                  <button class="btn--sq" @click="entryShow(entry.id)">
+                    <img src="../assets/pencil-outline.svg" alt="Edit" />
+                  </button>
+                  <button class="btn--sq" @click="entryDelete(entry.id)">
+                    <img src="../assets/trash-outline.svg" alt="Delete" />
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div v-if="blnEntryOpen" class="entry">
+          <form class="entry__form" action="">
+            <label class="for">Notes / results</label>
+            <textarea
+              name="notes"
+              cols="30"
+              rows="6"
+              class="entry__form__notes"
+              v-model="activeEntry['notes']"
+            ></textarea>
+            <label>Varieties</label>
+            <input
+              type="text"
+              name="varieties"
+              v-model="activeEntry['varieties']"
+            />
+            <div class="entry__form__dates">
+              <div>
+                <label>Sown</label>
+                <input
+                  type="date"
+                  name="sowdate"
+                  v-model="activeEntry['sowdate']"
+                />
+              </div>
+              <div>
+                <label>Direct?</label>
+                <input
+                  type="checkbox"
+                  name="sowtype"
+                  v-model="activeEntry['sowtype']"
+                />
+              </div>
+              <div>
+                <label v-if="!sownDirect">Planted out</label>
+                <input
+                  v-if="!sownDirect"
+                  type="date"
+                  name="plantdate"
+                  v-model="activeEntry['plantdate']"
+                />
+              </div>
+              <div>
+                <label>First harvest</label>
+                <input
+                  type="date"
+                  name="harvestdate"
+                  v-model="activeEntry['harvestdate']"
+                />
+              </div>
             </div>
           </form>
-          <div class="item__box__main">
-
-            <div class="item__entries">
-              <header class="item__entries__header">
-                <h3>Entries</h3>
-                <button @click="entryShow()">Add entry</button>
-              </header>
-              <ul class="item__entries__list">
-                <li v-for="entry in sortEntries()" :key="entry.id">
-                  <div>
-                    <span
-                      >{{ formatDate(entry.sowdate) }}
-                      <span v-if="entry.harvestdate">-</span>
-                      {{ formatDate(entry.harvestdate) }}</span
-                    >
-                    <span v-if="entry.sowdate && entry.harvestdate">{{
-                      dateDifference(entry.sowdate, entry.harvestdate)
-                    }}</span>
-                    <p>{{ entry.notes }}</p>
-                  </div>
-                  <div class="item__entries__list__btns">
-                    <button class="btn--sq" @click="entryShow(entry.id)">
-                      <img src="../assets/pencil-outline.svg" alt="Edit" />
-                    </button>
-                    <button class="btn--sq" @click="entryDelete(entry.id)">
-                      <img src="../assets/trash-outline.svg" alt="Delete" />
-                    </button>
-                  </div>
-                </li>
-              </ul>
-            </div>
+          <div class="entry__btns">
+            <button @click="entryClose" class="entry__btn">Cancel</button>
+            <button @click="entrySave(blnEntryNew)" class="entry__btn">
+              Save
+            </button>
           </div>
+        </div>
 
-          <div v-if="blnEntryOpen" class="entry">
-            <form class="entry__form" action="">
-              <label class="for">Notes / results</label>
-              <textarea
-                name="notes"
-                cols="30"
-                rows="6"
-                class="entry__form__notes"
-                v-model="activeEntry['notes']"
-              ></textarea>
-              <label>Varieties</label>
-              <input
-                type="text"
-                name="varieties"
-                v-model="activeEntry['varieties']"
-              />
-              <div class="entry__form__dates">
-                <div>
-                  <label>Sown</label>
-                  <input
-                    type="date"
-                    name="sowdate"
-                    v-model="activeEntry['sowdate']"
-                  />
-                </div>
-                <div>
-                  <label>Direct?</label>
-                  <input
-                    type="checkbox"
-                    name="sowtype"
-                    v-model="activeEntry['sowtype']"
-                  />
-                </div>
-                <div>
-                  <label v-if="!sownDirect">Planted out</label>
-                  <input
-                    v-if="!sownDirect"
-                    type="date"
-                    name="plantdate"
-                    v-model="activeEntry['plantdate']"
-                  />
-                </div>
-                <div>
-                  <label>First harvest</label>
-                  <input
-                    type="date"
-                    name="harvestdate"
-                    v-model="activeEntry['harvestdate']"
-                  />
-                </div>
-              </div>
-            </form>
-            <div class="entry__btns">
-              <button @click="entryClose" class="entry__btn">Cancel</button>
-              <button @click="entrySave(blnEntryNew)" class="entry__btn">
-                Save
-              </button>
-            </div>
-          </div>
-
-          <div class="item__btns">
-            <button class="item__btn" @click="itemClose">Cancel</button>
-            <button @click="itemSave(blnItemNew)">Save</button>
-          </div>
+        <div class="item__btns">
+          <button class="item__btn" @click="itemClose">Cancel</button>
+          <button @click="itemSave(blnItemNew)">Save</button>
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -147,7 +163,7 @@ import GrowItem from "../components/GrowItem.vue";
 export default {
   data() {
     return {
-      arrMonths: [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ],
+      arrMonths: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
       blnItemOpen: false,
       blnItemNew: false,
       blnEntryOpen: false,
@@ -158,30 +174,31 @@ export default {
       activeEntries: [],
       intLastId: 0,
       objGroups: {},
-      arrGroups: ['Vegetables', 'Flowers', 'Fruit']
+      arrGroups: ["Vegetables", "Flowers", "Fruit"],
+      //publicPath: process.env.BASE_URL,
     };
   },
   components: {
-    GrowItem
+    GrowItem,
   },
   methods: {
-      groupTitle: function (type) {
+    groupTitle: function(type) {
       return this.objGroups[type].length;
     },
     itemShow: function(id) {
-        this.blnItemOpen = true;
-        if (id == undefined) {
-            // new item
-            this.blnItemNew = true;
-            this.activeItem = {};
-            this.activeItem.type = ""
-        } else {
-            // existing item - transfer data to activeItem and make observable
-            let objItem = this.listItemMatch(id, this.growList)[0];
-            this.activeItem = JSON.parse(JSON.stringify(objItem));
-            this.activeEntries = JSON.parse(JSON.stringify(objItem.entries));
-            this.activeItem.type == undefined && (this.activeItem.type = "")
-        }
+      this.blnItemOpen = true;
+      if (id == undefined) {
+        // new item
+        this.blnItemNew = true;
+        this.activeItem = {};
+        this.activeItem.type = "";
+      } else {
+        // existing item - transfer data to activeItem and make observable
+        let objItem = this.listItemMatch(id, this.growList)[0];
+        this.activeItem = JSON.parse(JSON.stringify(objItem));
+        this.activeEntries = JSON.parse(JSON.stringify(objItem.entries));
+        this.activeItem.type == undefined && (this.activeItem.type = "");
+      }
     },
     itemClose: function() {
       this.blnItemOpen = false;
@@ -199,21 +216,23 @@ export default {
         // retrieve existing item
         objItem = this.listItemMatch(this.activeItem.id, this.growList)[0];
       }
-      let arrFields = document.querySelectorAll(".item__box__form input, .item__box__form textarea, .item__box__form select");
+      let arrFields = document.querySelectorAll(
+        ".item__box__form input, .item__box__form textarea, .item__box__form select"
+      );
       arrFields.forEach((field) => {
         objItem[field.name] = this.activeItem[field.name];
       });
       objItem.entries = this.activeEntries;
       // add new item to growList, save and close
       blnNewItem && this.growList.push(objItem);
-      this.saveToStorage();
+      this.saveToDatabase();
       this.itemClose();
     },
     itemDelete: function(id) {
       if (confirm("Are you sure?")) {
         let thisItem = this.listItemMatch(id, this.growList)[1];
         this.growList.splice(thisItem, 1);
-        this.saveToStorage();
+        this.saveToDatabase();
       }
     },
     entryShow: function(id) {
@@ -239,9 +258,14 @@ export default {
         objItem.id = this.intLastId;
       } else {
         // retrieve existing entry
-        objItem = this.listItemMatch(this.activeEntry.id, this.activeEntries)[0];
+        objItem = this.listItemMatch(
+          this.activeEntry.id,
+          this.activeEntries
+        )[0];
       }
-      let arrFields = document.querySelectorAll(".entry__form input, .entry__form textarea");
+      let arrFields = document.querySelectorAll(
+        ".entry__form input, .entry__form textarea"
+      );
       arrFields.forEach((field) => {
         objItem[field.name] = this.activeEntry[field.name];
       });
@@ -250,7 +274,7 @@ export default {
       }
       blnNewEntry && this.activeEntries.unshift(objItem);
       this.entryClose();
-      this.saveToStorage();
+      this.saveToDatabase();
     },
     entryDelete: function(id) {
       if (confirm("Are you sure?")) {
@@ -266,7 +290,7 @@ export default {
         }
       }
     },
-    loadFromStorage: function() {
+    /* loadFromStorage: function() {
       let objSavedData = localStorage.getItem("growData");
       if (objSavedData != null) {
         objSavedData = JSON.parse(objSavedData);
@@ -280,32 +304,71 @@ export default {
         intLastId: this.intLastId,
       };
       localStorage.setItem("growData", JSON.stringify(objGrowData));
+    }, */
+    loadFromDatabase: function() {
+      var username = this.$auth.user.email;
+      console.log("username", username);
+      username = "timbarden@outlook.com";
+      console.log("username", username);
+
+      var xhr = new XMLHttpRequest();
+      xhr.overrideMimeType("application/json");
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState == 4 && xhr.status == 200) {       
+          var strSavedData = xhr.responseText;
+          console.log("strSavedData", strSavedData);
+          strSavedData = JSON.parse(strSavedData);
+          console.log("strSavedData", strSavedData);
+          this.growList = strSavedData.arrGrowList;
+          strSavedData.arrGrowList.length > 0 && (this.intLastId = strSavedData.intLastId);
+        }
+      };
+      xhr.open("GET", "/dataLoad.php?username=" + username, true);
+      xhr.send();
+    },
+    saveToDatabase: function(){
+      console.log("saveToDatabase");
+      let objGrowData = {
+          'arrGrowList': this.growList,
+          'intLastId': this.intLastId,
+        },
+        strGrowData = JSON.stringify(objGrowData);
+      'strGrowData = encodeURIComponent(strGrowData);
+      console.log("strGrowData", strGrowData);
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        console.log("this.status", this.status);
+        console.log("this.readyState", this.readyState);
+        if (this.readyState == 4 && this.status == 200) {
+          console.log("xhr.responseText", xhr.responseText);
+        }
+      };
+      xhr.open("POST", "/dataSave.php", false);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.send("username=" + this.$auth.user.email + "&growlist=" + strGrowData);
     },
     formatDate: function(date) {
       if (date) {
         let d = new Date(date);
-        return (d.getDate() + " " + this.arrMonths[d.getMonth()] + " " + d.getFullYear());
+        return (
+          d.getDate() +
+          " " +
+          this.arrMonths[d.getMonth()] +
+          " " +
+          d.getFullYear()
+        );
       }
       return "";
     },
     dateDifference: function(sowdate, harvestdate) {
-      var diffD = Math.floor((new Date(harvestdate) - new Date(sowdate)) / (1000 * 60 * 60 * 24) / 7);
+      var diffD = Math.floor(
+        (new Date(harvestdate) - new Date(sowdate)) / (1000 * 60 * 60 * 24) / 7
+      );
       return " (" + diffD + " weeks)";
     },
-    sortList: function() {
-      return this.growList.sort((a, b) => a.name.localeCompare(b.name))
-    },
-    sortEntries: function(){
-      // .slice(0) removes 'Unexpected side effects'
-      return this.activeEntries.slice(0).sort(function(a, b) {
-          if ( Object.prototype.hasOwnProperty.call(a, "sowdate") && Object.prototype.hasOwnProperty.call(b, "sowdate") ){
-              b.sowdate.localeCompare(a.sowdate)
-          }
-      });
-    },
-    groupBy: function(array, key){
-      this.objGroups = {}
-      this.objGroups[""] = []
+    groupBy: function(array, key) {
+      this.objGroups = {};
+      this.objGroups[""] = [];
       array.forEach((item) => {
         if (!this.objGroups[item[key]]) {
           this.objGroups[item[key]] = [];
@@ -322,11 +385,32 @@ export default {
     sownDirect: function() {
       return this.activeEntry.sowtype;
     },
+    sortList: function() {
+      if (this.growList.length != 0){
+        return this.growList.slice(0).sort((a, b) => a.name.localeCompare(b.name));
+      }
+      return this.growList;
+    },
+    sortEntries: function() {
+      if (this.activeEntries.length != 0){
+        // .slice(0) removes 'Unexpected side effects'
+        return this.activeEntries.slice(0).sort(function(a, b) {
+          if (
+            Object.prototype.hasOwnProperty.call(a, "sowdate") &&
+            Object.prototype.hasOwnProperty.call(b, "sowdate")
+          ) {
+            b.sowdate.localeCompare(a.sowdate);
+          }
+        });
+      }
+      return this.activeEntries;
+    },
   },
   mounted() {
-    this.loadFromStorage();
+    //this.loadFromStorage();
+    this.loadFromDatabase();
   },
-}
+};
 </script>
 
 <style lang="scss">
@@ -357,7 +441,7 @@ textarea {
 }
 select {
   width: 9em;
-  padding: .15em .3em;
+  padding: 0.15em 0.3em;
   border-color: #555;
 }
 input {
@@ -449,19 +533,19 @@ button {
   max-height: 500px;
   overflow: auto;
   position: relative;
-  background: #FFF;
-  border: 1px solid #FFF;
+  background: #fff;
+  border: 1px solid #fff;
   border-radius: 5px;
   &.entryactive {
     overflow: hidden;
   }
   &__form {
     &__header {
-      color: #FFF;
+      color: #fff;
       background: #222;
       display: flex;
       justify-content: space-between;
-      padding: 1em 1.5em .65em;
+      padding: 1em 1.5em 0.65em;
       border-bottom: 4px solid #222;
       &__name {
         width: 100%;
@@ -471,9 +555,9 @@ button {
         margin: 0;
         padding-left: 0;
         background: transparent;
-        border-color: rgba(#FFF, 0);
+        border-color: rgba(#fff, 0);
         &:hover {
-          border-color: rgba(#FFF, .3);
+          border-color: rgba(#fff, 0.3);
         }
       }
     }
@@ -544,7 +628,6 @@ button {
     }
   }
 }
-
 
 /* ENTRY */
 .entry {
