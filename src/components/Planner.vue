@@ -307,18 +307,14 @@ export default {
     }, */
     loadFromDatabase: function() {
       var username = this.$auth.user.email;
-      console.log("username", username);
       username = "timbarden@outlook.com";
-      console.log("username", username);
 
       var xhr = new XMLHttpRequest();
       xhr.overrideMimeType("application/json");
       xhr.onreadystatechange = () => {
         if (xhr.readyState == 4 && xhr.status == 200) {       
           var strSavedData = xhr.responseText;
-          console.log("strSavedData", strSavedData);
           strSavedData = JSON.parse(strSavedData);
-          console.log("strSavedData", strSavedData);
           this.growList = strSavedData.arrGrowList;
           strSavedData.arrGrowList.length > 0 && (this.intLastId = strSavedData.intLastId);
         }
@@ -327,22 +323,13 @@ export default {
       xhr.send();
     },
     saveToDatabase: function(){
-      console.log("saveToDatabase");
       let objGrowData = {
           'arrGrowList': this.growList,
           'intLastId': this.intLastId,
         },
         strGrowData = JSON.stringify(objGrowData);
-      'strGrowData = encodeURIComponent(strGrowData);
-      console.log("strGrowData", strGrowData);
+      strGrowData = encodeURIComponent(strGrowData);
       var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        console.log("this.status", this.status);
-        console.log("this.readyState", this.readyState);
-        if (this.readyState == 4 && this.status == 200) {
-          console.log("xhr.responseText", xhr.responseText);
-        }
-      };
       xhr.open("POST", "/dataSave.php", false);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       xhr.send("username=" + this.$auth.user.email + "&growlist=" + strGrowData);

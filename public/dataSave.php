@@ -1,14 +1,8 @@
 <?php
 require ("db_connect.php");
 
-$growlist = $_POST["growlist"];
-//$username = $_POST["username"];
-
-//$growlist = "{}";
-$username = "timbarden@outlook.com";
-
-echo $growlist."<br>";
-echo $username;
+$growlist = mysqli_real_escape_string( $con, $_POST["growlist"] );
+$username = $_POST["username"];
 
 $sql = "UPDATE users SET data = '$growlist' WHERE username = '$username'";
 
