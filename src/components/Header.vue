@@ -4,7 +4,6 @@
         <img :src="$auth.user.picture">
         <div>
           <h2>{{ $auth.user.nickname }}</h2>
-          <p>{{ $auth.user.email }}</p>
         </div>
       </div>
       <div class='header__btns'>
@@ -39,12 +38,15 @@
     position: sticky;
     top: 0;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     &__user {
         display: flex;
+        align-items: center;
+        padding-right: 1em;
         img {
-            width: 2.5em;
+            max-width: 2.5em;
             border-radius: 5px;
             margin: auto 1em auto 0;
         }
@@ -58,6 +60,7 @@
         }
     }
     &__btns {
+        flex-shrink: 0;
         margin-left: auto;
     }
 }

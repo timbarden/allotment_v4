@@ -47,6 +47,7 @@
         div > span {
             opacity: 0.3;
             font-size: 0.8em;
+            white-space: nowrap;
         }
     }
 }

@@ -24,71 +24,81 @@
           @itemDelete="itemDelete(item.id)"
         />
       </ul>
+
+      <div class="planner__welcome" v-if="!$auth.isAuthenticated">
+          <p>Welcome! You need to log in.</p>
+      </div>
     </div>
 
     <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
       <div class="item__box" :class="{ entryactive: blnEntryOpen }">
-        <form
-          class="item__box__form"
-          action=""
-          :style="{ 'border-color': activeItem.color }"
-          @submit.prevent
-        >
-          <div class="item__box__form__header">
-            <input
-              class="item__box__form__header__name"
-              type="text"
-              name="name"
-              v-model="activeItem['name']"
-              placeholder="Item name"
-            />
-            <input type="color" name="color" v-model="activeItem['color']" />
+        <div class="item__box__home">
+          <form
+            class="item__box__home__form"
+            action=""
+            :style="{ 'border-color': activeItem.color }"
+            @submit.prevent
+          >
+            <div class="item__box__home__form__header">
+              <input
+                class="item__box__home__form__header__name"
+                type="text"
+                name="name"
+                v-model="activeItem['name']"
+                placeholder="Item name"
+              />
+              <input type="color" name="color" v-model="activeItem['color']" />
+            </div>
+            <div class="item__box__home__form__main">
+              <select name="type" v-model="activeItem['type']">
+                <option value="" disabled>Type:</option>
+                <option
+                  v-for="(name, index) in arrGroups"
+                  :key="index"
+                  :value="name"
+                  >{{ name }}</option
+                >
+              </select>
+            </div>
+          </form>
+          <div class="item__box__home__main">
+            <div class="item__entries">
+              <header class="item__entries__header">
+                <h3>Entries</h3>
+                <button @click="entryShow()">Add entry</button>
+              </header>
+              <ul class="item__entries__list">
+                <li v-for="entry in sortEntries" :key="entry.id">
+                  <div>
+                    <span
+                      >{{ formatDate(entry.sowdate) }}
+                      <span v-if="entry.harvestdate">-</span>
+                      {{ formatDate(entry.harvestdate) }}</span
+                    >
+                    <span v-if="entry.sowdate && entry.harvestdate">{{
+                      dateDifference(entry.sowdate, entry.harvestdate)
+                    }}</span>
+                    <p>{{ entry.notes }}</p>
+                  </div>
+                  <div class="item__entries__list__btns">
+                    <button class="btn--sq" @click="entryShow(entry.id)">
+                      <img src="../assets/pencil-outline.svg" alt="Edit" />
+                    </button>
+                    <button class="btn--sq" @click="entryDelete(entry.id)">
+                      <img src="../assets/trash-outline.svg" alt="Delete" />
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div class="item__box__form__main">
-            <select name="type" v-model="activeItem['type']">
-              <option value="" disabled>Type:</option>
-              <option
-                v-for="(name, index) in arrGroups"
-                :key="index"
-                :value="name"
-                >{{ name }}</option
-              >
-            </select>
-          </div>
-        </form>
-        <div class="item__box__main">
-          <div class="item__entries">
-            <header class="item__entries__header">
-              <h3>Entries</h3>
-              <button @click="entryShow()">Add entry</button>
-            </header>
-            <ul class="item__entries__list">
-              <li v-for="entry in sortEntries" :key="entry.id">
-                <div>
-                  <span
-                    >{{ formatDate(entry.sowdate) }}
-                    <span v-if="entry.harvestdate">-</span>
-                    {{ formatDate(entry.harvestdate) }}</span
-                  >
-                  <span v-if="entry.sowdate && entry.harvestdate">{{
-                    dateDifference(entry.sowdate, entry.harvestdate)
-                  }}</span>
-                  <p>{{ entry.notes }}</p>
-                </div>
-                <div class="item__entries__list__btns">
-                  <button class="btn--sq" @click="entryShow(entry.id)">
-                    <img src="../assets/pencil-outline.svg" alt="Edit" />
-                  </button>
-                  <button class="btn--sq" @click="entryDelete(entry.id)">
-                    <img src="../assets/trash-outline.svg" alt="Delete" />
-                  </button>
-                </div>
-              </li>
-            </ul>
+          <div class="item__btns">
+            <button class="item__btn" @click="itemClose">Cancel</button>
+            <button @click="itemSave(blnItemNew)">Save</button>
           </div>
         </div>
 
-        <div v-if="blnEntryOpen" class="entry">
+        <div v-if="blnEntryOpen" class="item__box__home__entry entry">
           <form class="entry__form" action="">
             <label class="for">Notes / results</label>
             <textarea
@@ -146,11 +156,6 @@
               Save
             </button>
           </div>
-        </div>
-
-        <div class="item__btns">
-          <button class="item__btn" @click="itemClose">Cancel</button>
-          <button @click="itemSave(blnItemNew)">Save</button>
         </div>
       </div>
     </div>
@@ -217,7 +222,7 @@ export default {
         objItem = this.listItemMatch(this.activeItem.id, this.growList)[0];
       }
       let arrFields = document.querySelectorAll(
-        ".item__box__form input, .item__box__form textarea, .item__box__form select"
+        ".item__box__home__form input, .item__box__home__form textarea, .item__box__home__form select"
       );
       arrFields.forEach((field) => {
         objItem[field.name] = this.activeItem[field.name];
@@ -319,7 +324,7 @@ export default {
           strSavedData.arrGrowList.length > 0 && (this.intLastId = strSavedData.intLastId);
         }
       };
-      xhr.open("GET", "/dataLoad.php?username=" + username, true);
+      xhr.open("GET", process.env.VUE_APP_API_URL + "dataLoad.php?username=" + username, true);
       xhr.send();
     },
     saveToDatabase: function(){
@@ -330,7 +335,7 @@ export default {
         strGrowData = JSON.stringify(objGrowData);
       strGrowData = encodeURIComponent(strGrowData);
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", "/dataSave.php", false);
+      xhr.open("POST", process.env.VUE_APP_API_URL + "dataSave.php", false);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       xhr.send("username=" + this.$auth.user.email + "&growlist=" + strGrowData);
     },
@@ -443,6 +448,7 @@ input {
     width: 3.5em;
     height: 3.5em;
     padding: 0;
+    z-index: 0;
     overflow: hidden;
     border-radius: 50%;
     transform: scale(0.9);
@@ -494,6 +500,9 @@ button {
   font-size: 1.25em;
   margin: 1.5em 0 0;
 }
+.planner__item__btns {
+  flex-shrink: 0;
+}
 
 @media screen and (min-width: 900px) {
   .planner {
@@ -518,42 +527,50 @@ button {
   height: 90vh;
   max-width: 600px;
   max-height: 500px;
-  overflow: auto;
   position: relative;
-  background: #fff;
-  border: 1px solid #fff;
+  background: #FFF;
+  border: 1px solid #FFF;
+  overflow: hidden;
   border-radius: 5px;
-  &.entryactive {
-    overflow: hidden;
-  }
-  &__form {
-    &__header {
-      color: #fff;
-      background: #222;
-      display: flex;
-      justify-content: space-between;
-      padding: 1em 1.5em 0.65em;
-      border-bottom: 4px solid #222;
-      &__name {
-        width: 100%;
-        padding-right: 1em;
+  &__home {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    overflow: auto;
+    &__form {
+      &__header {
+        color: #FFF;
+        background: #222;
+        display: flex;
+        justify-content: space-between;
+        padding: 1em 1.5em 0.65em;
+        border-bottom: 4px solid #222;
+        &__name {
+          width: 100%;
+          padding-right: 1em;
+        }
+        input {
+          margin: 0;
+          padding-left: 0;
+          background: transparent;
+          border-color: rgba(#FFF, 0);
+          &:hover {
+            border-color: rgba(#FFF, 0.3);
+          }
+        }
       }
-      input {
-        margin: 0;
-        padding-left: 0;
-        background: transparent;
-        border-color: rgba(#fff, 0);
-        &:hover {
-          border-color: rgba(#fff, 0.3);
+      &__main {
+        padding: 1.5em 1.5em 0;
+        select {
+          background: transparent;
+          color: #bbb;
         }
       }
     }
     &__main {
       padding: 1.5em 1.5em 0;
-      select {
-        background: transparent;
-        color: #bbb;
-      }
     }
   }
 }
@@ -565,9 +582,6 @@ button {
   button {
     margin-left: 0.5em;
   }
-}
-.item__box__main {
-  padding: 1.5em 1.5em 0;
 }
 .item__entries {
   &__header {
@@ -622,9 +636,10 @@ button {
   top: 0;
   right: 0;
   left: 0;
-  min-height: 100%;
+  bottom: 0;
   padding: 1.5em;
-  background: #fff;
+  background: #FFF;
+  overflow: auto;
   box-shadow: 0 0 0 1em rgba(0, 0, 0, 0.2);
   &__form {
     &__notes {
