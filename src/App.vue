@@ -12,6 +12,11 @@ import Header from "./components/Header";
 import Planner from "./components/Planner";
 
 export default {
+  data() {
+    return {
+      title: process.env.VUE_APP_TITLE 
+    }
+  },
   components: {
     Error, Header, Planner
   },

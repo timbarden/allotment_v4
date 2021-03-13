@@ -179,7 +179,7 @@ export default {
       activeEntries: [],
       intLastId: 0,
       objGroups: {},
-      arrGroups: ["Vegetables", "Flowers", "Fruit"],
+      arrGroups: ["Vegetables", "Flowers", "Fruit"]
       //publicPath: process.env.BASE_URL,
     };
   },
@@ -295,7 +295,29 @@ export default {
         }
       }
     },
-    /* loadFromStorage: function() {
+    loadData: function(type){
+      switch(type) {
+        case "local":
+          this.loadFromLocal()
+          break;
+        case "db":
+          this.loadFromDatabase()
+          break;
+        default:
+      } 
+    },
+    saveData: function(type){
+      switch(type) {
+        case "local":
+          this.saveToLocal()
+          break;
+        case "db":
+          this.saveToDatabase()
+          break;
+        default:
+      } 
+    },
+    loadFromLocal: function() {
       let objSavedData = localStorage.getItem("growData");
       if (objSavedData != null) {
         objSavedData = JSON.parse(objSavedData);
@@ -303,13 +325,13 @@ export default {
         objSavedData.arrGrowList.length > 0 && (this.intLastId = objSavedData.intLastId);
       }
     },
-    saveToStorage: function() {
+    saveToLocal: function() {
       let objGrowData = {
         arrGrowList: this.growList,
         intLastId: this.intLastId,
       };
       localStorage.setItem("growData", JSON.stringify(objGrowData));
-    }, */
+    },
     loadFromDatabase: function() {
       var username = this.$auth.user.email;
       username = "timbarden@outlook.com";
@@ -386,21 +408,13 @@ export default {
     sortEntries: function() {
       if (this.activeEntries.length != 0){
         // .slice(0) removes 'Unexpected side effects'
-        return this.activeEntries.slice(0).sort(function(a, b) {
-          if (
-            Object.prototype.hasOwnProperty.call(a, "sowdate") &&
-            Object.prototype.hasOwnProperty.call(b, "sowdate")
-          ) {
-            b.sowdate.localeCompare(a.sowdate);
-          }
-        });
+        return this.activeEntries.slice(0).sort((a, b) => b.sowdate.localeCompare(a.sowdate));
       }
       return this.activeEntries;
     },
   },
   mounted() {
-    //this.loadFromStorage();
-    this.loadFromDatabase();
+    this.loadData(process.env.VUE_APP_DATA);
   },
 };
 </script>
@@ -488,20 +502,20 @@ button {
 /* PLANNER */
 .planner {
   padding: 2em 4vw;
-}
-.planner__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  padding-bottom: 0.5em;
-}
-.planner__title {
-  font-size: 1.25em;
-  margin: 1.5em 0 0;
-}
-.planner__item__btns {
-  flex-shrink: 0;
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-bottom: 0.5em;
+  }
+  &__title {
+    font-size: 1.25em;
+    margin: 1.5em 0 0;
+  }
+  &__item__btns {
+    flex-shrink: 0;
+  }
 }
 
 @media screen and (min-width: 900px) {
