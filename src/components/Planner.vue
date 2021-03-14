@@ -3,7 +3,6 @@
     <div class="planner">
       <header class="planner__header">
         <h1>Allotment Diary</h1>
-
         <button
           v-if="$auth.isAuthenticated"
           class="btn--sq"
@@ -148,6 +147,19 @@
                   v-model="activeEntry['harvestdate']"
                 />
               </div>
+              <div>
+                <fieldset name="success">
+                  <legend>Success?</legend>
+                  <div>
+                    <input type="radio" name="success" value="success_yes">
+                    <label>Yes</label>
+                  </div>
+                  <div>
+                    <input type="radio" name="success" value="success_no">
+                    <label>No</label>
+                  </div>
+                </fieldset>
+              </div>
             </div>
           </form>
           <div class="entry__btns">
@@ -230,14 +242,14 @@ export default {
       objItem.entries = this.activeEntries;
       // add new item to growList, save and close
       blnNewItem && this.growList.push(objItem);
-      this.saveToDatabase();
+      this.saveData(process.env.VUE_APP_DATA);
       this.itemClose();
     },
     itemDelete: function(id) {
       if (confirm("Are you sure?")) {
         let thisItem = this.listItemMatch(id, this.growList)[1];
         this.growList.splice(thisItem, 1);
-        this.saveToDatabase();
+        this.saveData(process.env.VUE_APP_DATA);
       }
     },
     entryShow: function(id) {
@@ -268,6 +280,7 @@ export default {
           this.activeEntries
         )[0];
       }
+      //console.log("fieldset", document.querySelector(".entry__form fieldset input").value)
       let arrFields = document.querySelectorAll(
         ".entry__form input, .entry__form textarea"
       );
@@ -279,7 +292,7 @@ export default {
       }
       blnNewEntry && this.activeEntries.unshift(objItem);
       this.entryClose();
-      this.saveToDatabase();
+      this.saveData(process.env.VUE_APP_DATA);
     },
     entryDelete: function(id) {
       if (confirm("Are you sure?")) {
@@ -468,6 +481,20 @@ input {
     transform: scale(0.9);
     transform-origin: 0 50%;
     flex-shrink: 0;
+  }
+}
+fieldset {
+  display: flex;
+  > div {
+    display: flex;
+    align-items: center;
+  }
+  label {
+    padding: 0;
+    margin: 0 1.25em 0 .5em;
+  }
+  input[type="radio"]{
+    margin: 0;
   }
 }
 ::-webkit-color-swatch,
