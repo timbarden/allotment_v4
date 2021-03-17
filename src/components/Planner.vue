@@ -29,148 +29,150 @@
       </div>
     </div>
 
-    <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
-      <div class="item__box" :class="{ entryactive: blnEntryOpen }">
-        <div class="item__box__home">
-          <form
-            class="item__box__home__form"
-            action=""
-            :style="{ 'border-color': activeItem.color }"
-            @submit.prevent
-          >
-            <div class="item__box__home__form__header">
-              <input
-                class="item__box__home__form__header__name"
-                type="text"
-                name="name"
-                v-model="activeItem['name']"
-                placeholder="Item name"
-              />
-              <input type="color" name="color" v-model="activeItem['color']" />
+    <transition name="fade">
+      <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
+        <div class="item__box" :class="{ entryactive: blnEntryOpen }">
+          <div class="item__box__home">
+            <form
+              class="item__box__home__form"
+              action=""
+              :style="{ 'border-color': activeItem.color }"
+              @submit.prevent
+            >
+              <div class="item__box__home__form__header">
+                <input
+                  class="item__box__home__form__header__name"
+                  type="text"
+                  name="name"
+                  v-model="activeItem['name']"
+                  placeholder="Item name"
+                />
+                <input type="color" name="color" v-model="activeItem['color']" />
+              </div>
+              <div class="item__box__home__form__main">
+                <select name="type" v-model="activeItem['type']">
+                  <option value="" disabled>Type:</option>
+                  <option
+                    v-for="(name, index) in arrGroups"
+                    :key="index"
+                    :value="name"
+                    >{{ name }}</option
+                  >
+                </select>
+              </div>
+            </form>
+            <div class="item__box__home__main">
+              <div class="item__entries">
+                <header class="item__entries__header">
+                  <h3>Entries</h3>
+                  <button @click="entryShow()">Add entry</button>
+                </header>
+                <ul class="item__entries__list">
+                  <li v-for="entry in sortEntries" :key="entry.id">
+                    <div>
+                      <span
+                        >{{ formatDate(entry.sowdate) }}
+                        <span v-if="entry.harvestdate">-</span>
+                        {{ formatDate(entry.harvestdate) }}</span
+                      >
+                      <span v-if="entry.sowdate && entry.harvestdate">{{
+                        dateDifference(entry.sowdate, entry.harvestdate)
+                      }}</span>
+                      <p>{{ entry.notes }}</p>
+                    </div>
+                    <div class="item__entries__list__btns">
+                      <button class="btn--sq" @click="entryShow(entry.id)">
+                        <img src="../assets/pencil-outline.svg" alt="Edit" />
+                      </button>
+                      <button class="btn--sq" @click="entryDelete(entry.id)">
+                        <img src="../assets/trash-outline.svg" alt="Delete" />
+                      </button>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="item__box__home__form__main">
-              <select name="type" v-model="activeItem['type']">
-                <option value="" disabled>Type:</option>
-                <option
-                  v-for="(name, index) in arrGroups"
-                  :key="index"
-                  :value="name"
-                  >{{ name }}</option
-                >
-              </select>
-            </div>
-          </form>
-          <div class="item__box__home__main">
-            <div class="item__entries">
-              <header class="item__entries__header">
-                <h3>Entries</h3>
-                <button @click="entryShow()">Add entry</button>
-              </header>
-              <ul class="item__entries__list">
-                <li v-for="entry in sortEntries" :key="entry.id">
-                  <div>
-                    <span
-                      >{{ formatDate(entry.sowdate) }}
-                      <span v-if="entry.harvestdate">-</span>
-                      {{ formatDate(entry.harvestdate) }}</span
-                    >
-                    <span v-if="entry.sowdate && entry.harvestdate">{{
-                      dateDifference(entry.sowdate, entry.harvestdate)
-                    }}</span>
-                    <p>{{ entry.notes }}</p>
-                  </div>
-                  <div class="item__entries__list__btns">
-                    <button class="btn--sq" @click="entryShow(entry.id)">
-                      <img src="../assets/pencil-outline.svg" alt="Edit" />
-                    </button>
-                    <button class="btn--sq" @click="entryDelete(entry.id)">
-                      <img src="../assets/trash-outline.svg" alt="Delete" />
-                    </button>
-                  </div>
-                </li>
-              </ul>
+            <div class="item__btns">
+              <button class="item__btn" @click="itemClose">Cancel</button>
+              <button @click="itemSave(blnItemNew)">Save</button>
             </div>
           </div>
-          <div class="item__btns">
-            <button class="item__btn" @click="itemClose">Cancel</button>
-            <button @click="itemSave(blnItemNew)">Save</button>
-          </div>
-        </div>
 
-        <div v-if="blnEntryOpen" class="item__box__home__entry entry">
-          <form class="entry__form" action="">
-            <label class="for">Notes / results</label>
-            <textarea
-              name="notes"
-              cols="30"
-              rows="6"
-              class="entry__form__notes"
-              v-model="activeEntry['notes']"
-            ></textarea>
-            <label>Varieties</label>
-            <input
-              type="text"
-              name="varieties"
-              v-model="activeEntry['varieties']"
-            />
-            <div class="entry__form__dates">
-              <div>
-                <label>Sown</label>
-                <input
-                  type="date"
-                  name="sowdate"
-                  v-model="activeEntry['sowdate']"
-                />
+          <div v-if="blnEntryOpen" class="item__box__home__entry entry">
+            <form class="entry__form" action="">
+              <label class="for">Notes / results</label>
+              <textarea
+                name="notes"
+                cols="30"
+                rows="6"
+                class="entry__form__notes"
+                v-model="activeEntry['notes']"
+              ></textarea>
+              <label>Varieties</label>
+              <input
+                type="text"
+                name="varieties"
+                v-model="activeEntry['varieties']"
+              />
+              <div class="entry__form__dates">
+                <div>
+                  <label>Sown</label>
+                  <input
+                    type="date"
+                    name="sowdate"
+                    v-model="activeEntry['sowdate']"
+                  />
+                </div>
+                <div>
+                  <label>Direct?</label>
+                  <input
+                    type="checkbox"
+                    name="sowtype"
+                    v-model="activeEntry['sowtype']"
+                  />
+                </div>
+                <div>
+                  <label v-if="!sownDirect">Planted out</label>
+                  <input
+                    v-if="!sownDirect"
+                    type="date"
+                    name="plantdate"
+                    v-model="activeEntry['plantdate']"
+                  />
+                </div>
+                <div>
+                  <label>First harvest</label>
+                  <input
+                    type="date"
+                    name="harvestdate"
+                    v-model="activeEntry['harvestdate']"
+                  />
+                </div>
+                <div>
+                  <fieldset name="success">
+                    <legend>Success?</legend>
+                    <div>
+                      <input type="radio" name="success" value="success_yes">
+                      <label>Yes</label>
+                    </div>
+                    <div>
+                      <input type="radio" name="success" value="success_no">
+                      <label>No</label>
+                    </div>
+                  </fieldset>
+                </div>
               </div>
-              <div>
-                <label>Direct?</label>
-                <input
-                  type="checkbox"
-                  name="sowtype"
-                  v-model="activeEntry['sowtype']"
-                />
-              </div>
-              <div>
-                <label v-if="!sownDirect">Planted out</label>
-                <input
-                  v-if="!sownDirect"
-                  type="date"
-                  name="plantdate"
-                  v-model="activeEntry['plantdate']"
-                />
-              </div>
-              <div>
-                <label>First harvest</label>
-                <input
-                  type="date"
-                  name="harvestdate"
-                  v-model="activeEntry['harvestdate']"
-                />
-              </div>
-              <div>
-                <fieldset name="success">
-                  <legend>Success?</legend>
-                  <div>
-                    <input type="radio" name="success" value="success_yes">
-                    <label>Yes</label>
-                  </div>
-                  <div>
-                    <input type="radio" name="success" value="success_no">
-                    <label>No</label>
-                  </div>
-                </fieldset>
-              </div>
+            </form>
+            <div class="entry__btns">
+              <button @click="entryClose" class="entry__btn">Cancel</button>
+              <button @click="entrySave(blnEntryNew)" class="entry__btn">
+                Save
+              </button>
             </div>
-          </form>
-          <div class="entry__btns">
-            <button @click="entryClose" class="entry__btn">Cancel</button>
-            <button @click="entrySave(blnEntryNew)" class="entry__btn">
-              Save
-            </button>
           </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -699,5 +701,13 @@ button {
       margin-left: 0.5em;
     }
   }
+}
+.fade-enter-active, 
+.fade-leave-active {
+  transition: opacity .2s;
+}
+.fade-enter, 
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
