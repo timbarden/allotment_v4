@@ -25,7 +25,7 @@
       </ul>
 
       <div class="planner__welcome" v-if="!$auth.isAuthenticated">
-          <p>Welcome! You need to log in.</p>
+        <p>Welcome! You need to log in.</p>
       </div>
     </div>
 
@@ -47,7 +47,11 @@
                   v-model="activeItem['name']"
                   placeholder="Item name"
                 />
-                <input type="color" name="color" v-model="activeItem['color']" />
+                <input
+                  type="color"
+                  name="color"
+                  v-model="activeItem['color']"
+                />
               </div>
               <div class="item__box__home__form__main">
                 <select name="type" v-model="activeItem['type']">
@@ -152,11 +156,21 @@
                   <fieldset name="success">
                     <legend>Success?</legend>
                     <div>
-                      <input type="radio" name="success" value="success_yes">
+                      <input
+                        type="radio"
+                        name="success"
+                        value="success_yes"
+                        v-model="activeEntry['success_yes']"
+                      />
                       <label>Yes</label>
                     </div>
                     <div>
-                      <input type="radio" name="success" value="success_no">
+                      <input
+                        type="radio"
+                        name="success"
+                        value="success_no"
+                        v-model="activeEntry['success_yes']"
+                      />
                       <label>No</label>
                     </div>
                   </fieldset>
@@ -182,7 +196,20 @@ import GrowItem from "../components/GrowItem.vue";
 export default {
   data() {
     return {
-      arrMonths: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+      arrMonths: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
       blnItemOpen: false,
       blnItemNew: false,
       blnEntryOpen: false,
@@ -193,7 +220,7 @@ export default {
       activeEntries: [],
       intLastId: 0,
       objGroups: {},
-      arrGroups: ["Vegetables", "Flowers", "Fruit"]
+      arrGroups: ["Vegetables", "Flowers", "Fruit"],
       //publicPath: process.env.BASE_URL,
     };
   },
@@ -282,12 +309,15 @@ export default {
           this.activeEntries
         )[0];
       }
-      //console.log("fieldset", document.querySelector(".entry__form fieldset input").value)
       let arrFields = document.querySelectorAll(
         ".entry__form input, .entry__form textarea"
       );
       arrFields.forEach((field) => {
-        objItem[field.name] = this.activeEntry[field.name];
+        if (field.type == "radio" || field.type == "checkbox"){
+          objItem[field.value] = this.activeEntry[field.value];
+        } else {
+          objItem[field.name] = this.activeEntry[field.name];
+        }
       });
       if (this.activeItem.entries == undefined) {
         this.activeItem.entries = [];
@@ -310,34 +340,35 @@ export default {
         }
       }
     },
-    loadData: function(type){
-      switch(type) {
+    loadData: function(type) {
+      switch (type) {
         case "local":
-          this.loadFromLocal()
+          this.loadFromLocal();
           break;
         case "db":
-          this.loadFromDatabase()
+          this.loadFromDatabase();
           break;
         default:
-      } 
+      }
     },
-    saveData: function(type){
-      switch(type) {
+    saveData: function(type) {
+      switch (type) {
         case "local":
-          this.saveToLocal()
+          this.saveToLocal();
           break;
         case "db":
-          this.saveToDatabase()
+          this.saveToDatabase();
           break;
         default:
-      } 
+      }
     },
     loadFromLocal: function() {
       let objSavedData = localStorage.getItem("growData");
       if (objSavedData != null) {
         objSavedData = JSON.parse(objSavedData);
         this.growList = objSavedData.arrGrowList;
-        objSavedData.arrGrowList.length > 0 && (this.intLastId = objSavedData.intLastId);
+        objSavedData.arrGrowList.length > 0 &&
+          (this.intLastId = objSavedData.intLastId);
       }
     },
     saveToLocal: function() {
@@ -354,27 +385,34 @@ export default {
       var xhr = new XMLHttpRequest();
       xhr.overrideMimeType("application/json");
       xhr.onreadystatechange = () => {
-        if (xhr.readyState == 4 && xhr.status == 200) {       
+        if (xhr.readyState == 4 && xhr.status == 200) {
           var strSavedData = xhr.responseText;
           strSavedData = JSON.parse(strSavedData);
           this.growList = strSavedData.arrGrowList;
-          strSavedData.arrGrowList.length > 0 && (this.intLastId = strSavedData.intLastId);
+          strSavedData.arrGrowList.length > 0 &&
+            (this.intLastId = strSavedData.intLastId);
         }
       };
-      xhr.open("GET", process.env.VUE_APP_API_URL + "dataLoad.php?username=" + username, true);
+      xhr.open(
+        "GET",
+        process.env.VUE_APP_API_URL + "dataLoad.php?username=" + username,
+        true
+      );
       xhr.send();
     },
-    saveToDatabase: function(){
+    saveToDatabase: function() {
       let objGrowData = {
-          'arrGrowList': this.growList,
-          'intLastId': this.intLastId,
+          arrGrowList: this.growList,
+          intLastId: this.intLastId,
         },
         strGrowData = JSON.stringify(objGrowData);
       strGrowData = encodeURIComponent(strGrowData);
       var xhr = new XMLHttpRequest();
       xhr.open("POST", process.env.VUE_APP_API_URL + "dataSave.php", false);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      xhr.send("username=" + this.$auth.user.email + "&growlist=" + strGrowData);
+      xhr.send(
+        "username=" + this.$auth.user.email + "&growlist=" + strGrowData
+      );
     },
     formatDate: function(date) {
       if (date) {
@@ -415,15 +453,19 @@ export default {
       return this.activeEntry.sowtype;
     },
     sortList: function() {
-      if (this.growList.length != 0){
-        return this.growList.slice(0).sort((a, b) => a.name.localeCompare(b.name));
+      if (this.growList.length != 0) {
+        return this.growList
+          .slice(0)
+          .sort((a, b) => a.name.localeCompare(b.name));
       }
       return this.growList;
     },
     sortEntries: function() {
-      if (this.activeEntries.length != 0){
+      if (this.activeEntries.length != 0) {
         // .slice(0) removes 'Unexpected side effects'
-        return this.activeEntries.slice(0).sort((a, b) => b.sowdate.localeCompare(a.sowdate));
+        return this.activeEntries
+          .slice(0)
+          .sort((a, b) => b.sowdate.localeCompare(a.sowdate));
       }
       return this.activeEntries;
     },
@@ -493,9 +535,9 @@ fieldset {
   }
   label {
     padding: 0;
-    margin: 0 1.25em 0 .5em;
+    margin: 0 1.25em 0 0.5em;
   }
-  input[type="radio"]{
+  input[type="radio"] {
     margin: 0;
   }
 }
@@ -571,8 +613,8 @@ button {
   max-width: 600px;
   max-height: 500px;
   position: relative;
-  background: #FFF;
-  border: 1px solid #FFF;
+  background: #fff;
+  border: 1px solid #fff;
   overflow: hidden;
   border-radius: 5px;
   &__home {
@@ -584,7 +626,7 @@ button {
     overflow: auto;
     &__form {
       &__header {
-        color: #FFF;
+        color: #fff;
         background: #222;
         display: flex;
         justify-content: space-between;
@@ -598,9 +640,9 @@ button {
           margin: 0;
           padding-left: 0;
           background: transparent;
-          border-color: rgba(#FFF, 0);
+          border-color: rgba(#fff, 0);
           &:hover {
-            border-color: rgba(#FFF, 0.3);
+            border-color: rgba(#fff, 0.3);
           }
         }
       }
@@ -681,7 +723,7 @@ button {
   left: 0;
   bottom: 0;
   padding: 1.5em;
-  background: #FFF;
+  background: #fff;
   overflow: auto;
   box-shadow: 0 0 0 1em rgba(0, 0, 0, 0.2);
   &__form {
@@ -702,9 +744,9 @@ button {
     }
   }
 }
-.fade-enter-active, 
+.fade-enter-active,
 .fade-leave-active {
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 .fade-enter, 
 .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
