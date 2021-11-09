@@ -1,20 +1,15 @@
 <template>
-    <li>
-        <div>
+    <li class="planner__list__item">
+        <button class="planner__list__item__edit" @click="$emit('itemShow')">
           {{ name }}
                 <span v-if="entries">({{ entries.length }} 
                 <span v-if="entries.length == 1">entry</span>
                 <span v-else>entries</span>)
             </span>
-        </div>
-        <div class="planner__item__btns">
-            <button class="btn--sq" @click="$emit('itemShow')">
-                <img src="../assets/pencil-outline.svg" alt="Edit" />
-            </button>
-            <button class="btn--sq" @click="$emit('itemDelete')">
-                <img src="../assets/trash-outline.svg" alt="Delete" />
-            </button>
-        </div>
+        </button>
+        <button class="planner__list__item__delete btn--sq" @click="$emit('itemDelete')">
+            <img src="../assets/trash-outline.svg" alt="Delete" />
+        </button>
     </li>
 </template>
 
@@ -33,25 +28,40 @@
 
 <style lang="scss" scoped>
 .planner__list {
-    li {
-        padding: 0.7em 0.7em 0.7em 1em;
+    &__item {
         margin-top: 1.25em;
-        background: #fff;
         border-radius: 5px;
-        overflow: hidden;
-        box-shadow: 0.3em 0.3em 0.5em 0 rgba(0, 0, 0, 0.05);
-        border-left: 20px solid #000;
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        div > span {
-            opacity: 0.3;
-            font-size: 0.8em;
-            white-space: nowrap;
+        &__edit {
+            width: 100%;
+            background: #FFF;
+            border-radius: inherit;
+            text-align: left;
+            border: 1px solid #DDD;
+            border-left-width: 20px;
+            border-left-color: inherit;
+            padding: 1.25em 4.25em 1.25em 1.25em;
+            box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.03);
+            transition: box-shadow .2s ease;
+            &:hover {
+                box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.1);
+            }
+            > span {
+                opacity: 0.3;
+                font-size: 0.8em;
+                white-space: nowrap;
+            }
+        }
+        &__delete {
+            position: absolute;
+            top: 0;
+            right: 1em;
+            bottom: 0;
+            margin: auto 0;
         }
     }
-}
-.planner__item__btns button {
-  margin-left: 0.5em;
 }
 </style>

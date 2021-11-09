@@ -32,7 +32,7 @@ export default {
 body {
   margin: 0;
   color: #333;
-  background: #ccd3c7;
+  background: #FFF;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font: 400 1em/1.2 "Nunito", sans-serif;
@@ -44,8 +44,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
 }
 h1 {
-  font: 700 2.25em/1.2 "Fredoka One", sans-serif;
-  letter-spacing: .03em;
+  font: 600 3.5em/1.2 "Caveat", sans-serif;
 }
 ul {
   list-style: none;

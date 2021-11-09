@@ -72,8 +72,8 @@
                   <button @click="entryShow()">Add entry</button>
                 </header>
                 <ul class="item__entries__list">
-                  <li v-for="entry in sortEntries" :key="entry.id">
-                    <div>
+                  <li class="item__entries__list__item" v-for="entry in sortEntries" :key="entry.id">
+                    <button class="item__entries__list__item__edit" @click="entryShow(entry.id)">
                       <span
                         >{{ formatDate(entry.sowdate) }}
                         <span v-if="entry.harvestdate">-</span>
@@ -83,15 +83,10 @@
                         dateDifference(entry.sowdate, entry.harvestdate)
                       }}</span>
                       <p>{{ entry.notes }}</p>
-                    </div>
-                    <div class="item__entries__list__btns">
-                      <button class="btn--sq" @click="entryShow(entry.id)">
-                        <img src="../assets/pencil-outline.svg" alt="Edit" />
-                      </button>
-                      <button class="btn--sq" @click="entryDelete(entry.id)">
-                        <img src="../assets/trash-outline.svg" alt="Delete" />
-                      </button>
-                    </div>
+                    </button>
+                    <button class="item__entries__list__item__delete btn--sq" @click="entryDelete(entry.id)">
+                      <img src="../assets/trash-outline.svg" alt="Delete" />
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -556,13 +551,13 @@ button {
   padding: 0.45em 0.7em;
   background: #eee;
   transition: background 0.1s ease;
-  &:hover {
-    background: #ddd;
-  }
   &.btn--sq {
     width: 2em;
     height: 2em;
     padding: 0;
+    &:hover {
+      background: #ddd;
+    }
   }
   img {
     width: 1.25em;
@@ -682,34 +677,40 @@ button {
     list-style: none;
     margin: 0 0 1.5em;
     padding: 0;
-    li {
-      border: 1px solid #ddd;
-      margin-top: 1em;
-      padding: 1em;
+    &__item {
+      margin-top: 1.25em;
+      border-radius: 5px;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-radius: 5px;
-      p {
-        margin: 0.25em 0 0;
-        overflow: hidden;
-        max-height: 1.25em;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
+      &__edit {
+          width: 100%;
+          background: #FFF;
+          border-radius: inherit;
+          text-align: left;
+          border: 1px solid #DDD;
+          padding: 1.25em 4.25em 1.25em 1.25em;
+          box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.03);
+          transition: box-shadow .2s ease;
+          &:hover {
+              box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.1);
+          }
+          > span {
+              opacity: 0.3;
+              font-size: 0.8em;
+              white-space: nowrap;
+          }
+          > p {
+            margin: .25em 0 0;
+          }
       }
-      div > span {
-        opacity: 0.3;
-        font-size: 0.8em;
-      }
-    }
-    &__btns {
-      display: flex;
-      flex-shrink: 0;
-      margin-left: 0.5em;
-      button {
-        margin-left: 0.5em;
+      &__delete {
+          position: absolute;
+          top: 0;
+          right: 1em;
+          bottom: 0;
+          margin: auto 0;
       }
     }
   }
