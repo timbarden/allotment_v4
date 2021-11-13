@@ -511,14 +511,12 @@ input {
     width: 10em;
   }
   &[type="color"] {
-    width: 3.5em;
-    height: 3.5em;
+    width: 3em;
+    height: 3em;
     padding: 0;
     z-index: 0;
     overflow: hidden;
     border-radius: 50%;
-    transform: scale(0.9);
-    transform-origin: 0 50%;
     flex-shrink: 0;
   }
 }
@@ -597,10 +595,11 @@ button {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(100, 100, 100, .75);
 }
 .item__box {
   width: 90vw;
@@ -609,9 +608,8 @@ button {
   max-height: 500px;
   position: relative;
   background: #fff;
-  border: 1px solid #fff;
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: 12px;
   &__home {
     position: absolute;
     top: 0;
@@ -624,9 +622,9 @@ button {
         color: #fff;
         background: #222;
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        padding: 1em 1.5em 0.65em;
-        border-bottom: 4px solid #222;
+        padding: .65em 1.5em;
         &__name {
           width: 100%;
           padding-right: 1em;
