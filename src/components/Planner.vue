@@ -33,15 +33,14 @@
       <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
         <div class="item__box" :class="{ entryactive: blnEntryOpen }">
           <div class="item__box__home">
-            <form
-              class="item__box__home__form"
-              action=""
-              :style="{ 'border-color': activeItem.color }"
-              @submit.prevent
-            >
-              <div class="item__box__home__form__header">
+            <header class="item__box__home__header">
+              <form
+                class="item__box__home__header__form"
+                action=""
+                :style="{ 'border-color': activeItem.color }"
+                @submit.prevent
+              >
                 <input
-                  class="item__box__home__form__header__name"
                   type="text"
                   name="name"
                   v-model="activeItem['name']"
@@ -52,8 +51,15 @@
                   name="color"
                   v-model="activeItem['color']"
                 />
-              </div>
-              <div class="item__box__home__form__main">
+              </form>
+            </header>
+            <main class="item__box__home__main item__main">
+              <form
+                class="item__box__home__main__form"
+                action=""
+                :style="{ 'border-color': activeItem.color }"
+                @submit.prevent
+              >
                 <select name="type" v-model="activeItem['type']">
                   <option value="" disabled>Type:</option>
                   <option
@@ -63,9 +69,7 @@
                     >{{ name }}</option
                   >
                 </select>
-              </div>
-            </form>
-            <div class="item__box__home__main">
+              </form>
               <div class="item__entries">
                 <header class="item__entries__header">
                   <h3>Entries</h3>
@@ -90,95 +94,103 @@
                   </li>
                 </ul>
               </div>
-            </div>
-            <div class="item__btns">
-              <button class="item__btn" @click="itemClose">Cancel</button>
-              <button @click="itemSave(blnItemNew)">Save</button>
-            </div>
+            </main>
+            <footer class="item__box__home__footer item__footer">
+              <div class="item__btns">
+                <button class="item__btn" @click="itemClose">Cancel</button>
+                <button @click="itemSave(blnItemNew)">Save</button>
+              </div>
+            </footer>
           </div>
 
-          <div v-if="blnEntryOpen" class="item__box__home__entry entry">
-            <form class="entry__form" action="">
-              <label class="for">Notes / results</label>
-              <textarea
-                name="notes"
-                cols="30"
-                rows="6"
-                class="entry__form__notes"
-                v-model="activeEntry['notes']"
-              ></textarea>
-              <label>Varieties</label>
-              <input
-                type="text"
-                name="varieties"
-                v-model="activeEntry['varieties']"
-              />
-              <div class="entry__form__dates">
-                <div>
-                  <label>Sown</label>
+          <transition name="fade">
+            <div v-if="blnEntryOpen" class="item__box__home__entry entry">
+              <main class="entry__main item__main">
+                <form class="entry__main__form" action="">
+                  <label class="for">Notes / results</label>
+                  <textarea
+                    name="notes"
+                    cols="30"
+                    rows="6"
+                    class="entry__main__form__notes"
+                    v-model="activeEntry['notes']"
+                  ></textarea>
+                  <label>Varieties</label>
                   <input
-                    type="date"
-                    name="sowdate"
-                    v-model="activeEntry['sowdate']"
+                    type="text"
+                    name="varieties"
+                    v-model="activeEntry['varieties']"
                   />
-                </div>
-                <div>
-                  <label>Direct?</label>
-                  <input
-                    type="checkbox"
-                    name="sowtype"
-                    v-model="activeEntry['sowtype']"
-                  />
-                </div>
-                <div>
-                  <label v-if="!sownDirect">Planted out</label>
-                  <input
-                    v-if="!sownDirect"
-                    type="date"
-                    name="plantdate"
-                    v-model="activeEntry['plantdate']"
-                  />
-                </div>
-                <div>
-                  <label>First harvest</label>
-                  <input
-                    type="date"
-                    name="harvestdate"
-                    v-model="activeEntry['harvestdate']"
-                  />
-                </div>
-                <div>
-                  <fieldset name="success">
-                    <legend>Success?</legend>
+                  <div class="entry__main__form__dates">
                     <div>
+                      <label>Sown</label>
                       <input
-                        type="radio"
-                        name="success"
-                        value="success_yes"
-                        v-model="activeEntry['success_yes']"
+                        type="date"
+                        name="sowdate"
+                        v-model="activeEntry['sowdate']"
                       />
-                      <label>Yes</label>
                     </div>
                     <div>
+                      <label>Direct?</label>
                       <input
-                        type="radio"
-                        name="success"
-                        value="success_no"
-                        v-model="activeEntry['success_yes']"
+                        type="checkbox"
+                        name="sowtype"
+                        v-model="activeEntry['sowtype']"
                       />
-                      <label>No</label>
                     </div>
-                  </fieldset>
+                    <div>
+                      <label v-if="!sownDirect">Planted out</label>
+                      <input
+                        v-if="!sownDirect"
+                        type="date"
+                        name="plantdate"
+                        v-model="activeEntry['plantdate']"
+                      />
+                    </div>
+                    <div>
+                      <label>First harvest</label>
+                      <input
+                        type="date"
+                        name="harvestdate"
+                        v-model="activeEntry['harvestdate']"
+                      />
+                    </div>
+                    <div>
+                      <fieldset name="success">
+                        <legend>Success?</legend>
+                        <div>
+                          <input
+                            type="radio"
+                            name="success"
+                            value="success_yes"
+                            v-model="activeEntry['success_yes']"
+                          />
+                          <label>Yes</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name="success"
+                            value="success_no"
+                            v-model="activeEntry['success_yes']"
+                          />
+                          <label>No</label>
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </form>
+              </main>
+              <footer class="entry__footer item__footer">
+                <div class="entry__btns">
+                  <button @click="entryClose" class="entry__btn">Cancel</button>
+                  <button @click="entrySave(blnEntryNew)" class="entry__btn">
+                    Save
+                  </button>
                 </div>
-              </div>
-            </form>
-            <div class="entry__btns">
-              <button @click="entryClose" class="entry__btn">Cancel</button>
-              <button @click="entrySave(blnEntryNew)" class="entry__btn">
-                Save
-              </button>
+              </footer>
             </div>
-          </div>
+          </transition>
         </div>
       </div>
     </transition>
@@ -258,7 +270,7 @@ export default {
         objItem = this.listItemMatch(this.activeItem.id, this.growList)[0];
       }
       let arrFields = document.querySelectorAll(
-        ".item__box__home__form input, .item__box__home__form textarea, .item__box__home__form select"
+        ".item__box__home__header__form input, .item__box__home__header__form textarea, .item__box__home__main__form select"
       );
       arrFields.forEach((field) => {
         objItem[field.name] = this.activeItem[field.name];
@@ -305,7 +317,7 @@ export default {
         )[0];
       }
       let arrFields = document.querySelectorAll(
-        ".entry__form input, .entry__form textarea"
+        ".entry__main__form input, .entry__main__form textarea"
       );
       arrFields.forEach((field) => {
         if (field.type == "radio" || field.type == "checkbox"){
@@ -492,6 +504,7 @@ select {
   font: inherit;
   color: inherit;
   margin-bottom: 1.5rem;
+  background: transparent;
   border: 1px solid #ddd;
 }
 textarea {
@@ -589,6 +602,38 @@ button {
 }
 
 /* ITEM EDITOR  */
+.item__main {
+  overflow: hidden;
+  overflow-y: auto;
+  background:
+    /* Shadow covers */
+    linear-gradient(white 30%, rgba(255,255,255,0)),
+    linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+    /* Shadows */
+    radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
+    radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+  background:
+    /* Shadow covers */
+    linear-gradient(white 30%, rgba(255,255,255,0)),
+    linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+    /* Shadows */
+    radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
+    radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+  background-repeat: no-repeat;
+  background-color: white;
+  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+  
+  /* Opera doesn't support this in the shorthand */
+  background-attachment: local, local, scroll, scroll;
+}
+.item__footer {
+  position: sticky;
+  bottom: 0;
+  background: #FFF;
+  padding: 1em 1.5em;
+}
+
+
 .item {
   position: fixed;
   top: 0;
@@ -616,9 +661,12 @@ button {
     right: 0;
     left: 0;
     bottom: 0;
-    overflow: auto;
-    &__form {
-      &__header {
+    display: flex;
+    flex-direction: column;
+    &__header {
+      position: sticky;
+      top: 0;
+      &__form {
         color: #fff;
         background: #222;
         display: flex;
@@ -639,22 +687,20 @@ button {
           }
         }
       }
-      &__main {
-        padding: 1.5em 1.5em 0;
-        select {
-          background: transparent;
-          color: #bbb;
-        }
-      }
     }
     &__main {
-      padding: 1.5em 1.5em 0;
+      padding: 1.25em 1.5em 0;
+      select {
+        width: 100%;
+        padding: .35em;
+        background: transparent;
+        border: 1px solid #DDD;
+        box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.03);
+      }
     }
   }
 }
 .item__btns {
-  padding: 0 1.5em;
-  margin-bottom: 2em;
   display: flex;
   justify-content: flex-end;
   button {
@@ -662,6 +708,7 @@ button {
   }
 }
 .item__entries {
+  margin-top: 1em;
   &__header {
     display: flex;
     align-items: center;
@@ -684,7 +731,7 @@ button {
       justify-content: space-between;
       &__edit {
           width: 100%;
-          background: #FFF;
+          background: transparent;
           border-radius: inherit;
           text-align: left;
           border: 1px solid #DDD;
@@ -717,25 +764,30 @@ button {
 /* ENTRY */
 .entry {
   position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  padding: 1.5em;
-  background: #fff;
-  overflow: auto;
+  top: 10px;
+  right: 10px;
+  left: 10px;
+  bottom: 10px;
+  background: #FFF;
+  border-radius: 7px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 0 0 1em rgba(0, 0, 0, 0.2);
-  &__form {
-    &__notes {
-      width: 100%;
-    }
-    &__dates {
-      display: flex;
-      flex-wrap: wrap;
+  &__main {
+    padding: 1.5em;
+    overflow: auto;
+    &__form {
+      &__notes {
+        width: 100%;
+      }
+      &__dates {
+        display: flex;
+        flex-wrap: wrap;
+      }
     }
   }
   &__btns {
-    margin-bottom: 2em;
     display: flex;
     justify-content: flex-end;
     button {
