@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="planner">
+  <main class="main">
+    <section class="planner">
       <header class="planner__header">
         <h1>Allotment Diary</h1>
         <button
@@ -20,16 +20,18 @@
           :entries="item.entries"
           :style="{ 'border-color': item.color }"
           @itemShow="itemShow(item.id)"
-          @itemDelete="itemDelete(item.id)"
+          @itemDelete="itemDelete(item)"
         />
       </ul>
 
       <div class="planner__welcome" v-if="!$auth.isAuthenticated">
         <p>Welcome! You need to log in.</p>
       </div>
-    </div>
+    </section>
 
-    <transition name="fade">
+    <Log v-if="$auth.isAuthenticated" :list="this.arrLogs"> </Log>
+
+    <transition name="fadeup">
       <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
         <div class="item__box" :class="{ entryactive: blnEntryOpen }">
           <div class="item__box__home">
@@ -53,7 +55,7 @@
                 />
               </form>
             </header>
-            <main class="item__box__home__main item__main">
+            <main class="item__box__home__main">
               <form
                 class="item__box__home__main__form"
                 action=""
@@ -76,8 +78,15 @@
                   <button @click="entryShow()">Add entry</button>
                 </header>
                 <ul class="item__entries__list">
-                  <li class="item__entries__list__item" v-for="entry in sortEntries" :key="entry.id">
-                    <button class="item__entries__list__item__edit" @click="entryShow(entry.id)">
+                  <li
+                    class="item__entries__list__item"
+                    v-for="entry in sortEntries"
+                    :key="entry.id"
+                  >
+                    <button
+                      class="item__entries__list__item__edit"
+                      @click="entryShow(entry.id)"
+                    >
                       <span
                         >{{ formatDate(entry.sowdate) }}
                         <span v-if="entry.harvestdate">-</span>
@@ -88,7 +97,10 @@
                       }}</span>
                       <p>{{ entry.notes }}</p>
                     </button>
-                    <button class="item__entries__list__item__delete btn--sq" @click="entryDelete(entry.id)">
+                    <button
+                      class="item__entries__list__item__delete btn--sq"
+                      @click="entryDelete(entry)"
+                    >
                       <img src="../assets/trash-outline.svg" alt="Delete" />
                     </button>
                   </li>
@@ -103,9 +115,9 @@
             </footer>
           </div>
 
-          <transition name="fade">
+          <transition name="scale">
             <div v-if="blnEntryOpen" class="item__box__home__entry entry">
-              <main class="entry__main item__main">
+              <main class="entry__main">
                 <form class="entry__main__form" action="">
                   <label class="for">Notes / results</label>
                   <textarea
@@ -194,11 +206,12 @@
         </div>
       </div>
     </transition>
-  </div>
+  </main>
 </template>
 
 <script>
 import GrowItem from "../components/GrowItem.vue";
+import Log from "../components/Log";
 
 export default {
   data() {
@@ -228,11 +241,13 @@ export default {
       intLastId: 0,
       objGroups: {},
       arrGroups: ["Vegetables", "Flowers", "Fruit"],
+      arrLogs: [],
       //publicPath: process.env.BASE_URL,
     };
   },
   components: {
     GrowItem,
+    Log,
   },
   methods: {
     groupTitle: function(type) {
@@ -265,9 +280,11 @@ export default {
         // assign ID to new item
         this.intLastId++;
         objItem.id = this.intLastId;
+        this.logUpdate("New item '" + this.activeItem.name + "'", "created");
       } else {
         // retrieve existing item
         objItem = this.listItemMatch(this.activeItem.id, this.growList)[0];
+        this.logUpdate("'" + objItem.name + "'", "updated");
       }
       let arrFields = document.querySelectorAll(
         ".item__box__home__header__form input, .item__box__home__header__form textarea, .item__box__home__main__form select"
@@ -281,12 +298,17 @@ export default {
       this.saveData(process.env.VUE_APP_DATA);
       this.itemClose();
     },
-    itemDelete: function(id) {
+    itemDelete: function(obj) {
       if (confirm("Are you sure?")) {
-        let thisItem = this.listItemMatch(id, this.growList)[1];
+        let thisItem = this.listItemMatch(obj.id, this.growList)[1];
         this.growList.splice(thisItem, 1);
+        this.logUpdate("'" + obj.name + "'", "deleted");
         this.saveData(process.env.VUE_APP_DATA);
       }
+    },
+    logUpdate: function(stName, strMsg) {
+      this.arrLogs.unshift(stName + " " + strMsg);
+      this.arrLogs.length > 5 && this.arrLogs.pop();
     },
     entryShow: function(id) {
       this.blnEntryOpen = true;
@@ -309,18 +331,23 @@ export default {
         // assign ID to new entry
         this.intLastId++;
         objItem.id = this.intLastId;
+        this.logUpdate(
+          "New entry for '" + this.activeItem.name + "'",
+          "created"
+        );
       } else {
         // retrieve existing entry
         objItem = this.listItemMatch(
           this.activeEntry.id,
           this.activeEntries
         )[0];
+        this.logUpdate("Entry for '" + this.activeItem.name + "'", "updated");
       }
       let arrFields = document.querySelectorAll(
         ".entry__main__form input, .entry__main__form textarea"
       );
       arrFields.forEach((field) => {
-        if (field.type == "radio" || field.type == "checkbox"){
+        if (field.type == "radio") {
           objItem[field.value] = this.activeEntry[field.value];
         } else {
           objItem[field.name] = this.activeEntry[field.name];
@@ -333,10 +360,11 @@ export default {
       this.entryClose();
       this.saveData(process.env.VUE_APP_DATA);
     },
-    entryDelete: function(id) {
+    entryDelete: function(obj) {
       if (confirm("Are you sure?")) {
-        let thisEntry = this.listItemMatch(id, this.activeEntries)[1];
+        let thisEntry = this.listItemMatch(obj.id, this.activeEntries)[1];
         this.activeEntries.splice(thisEntry, 1);
+        this.logUpdate("Entry for '" + this.activeItem.name + "'", "deleted");
       }
     },
     listItemMatch: function(id, list) {
@@ -484,6 +512,14 @@ export default {
 </script>
 
 <style lang="scss">
+@import "@/styles/base.scss";
+@import "@/styles/transitions.scss";
+.main {
+  padding: 4vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
 /* FORM ELEMENTS */
 form {
   margin: 0;
@@ -578,10 +614,9 @@ button {
 
 /* PLANNER */
 .planner {
-  padding: 2em 4vw;
+  /*padding: 2em 4vw;*/
   &__header {
-    display: flex;
-    align-items: center;
+    @extend %flex_center;
     justify-content: space-between;
     flex-wrap: wrap;
     padding-bottom: 0.5em;
@@ -590,6 +625,9 @@ button {
     font-size: 1.25em;
     margin: 1.5em 0 0;
   }
+  ul {
+    @extend %list_reset;
+  }
   &__item__btns {
     flex-shrink: 0;
   }
@@ -597,54 +635,26 @@ button {
 
 @media screen and (min-width: 900px) {
   .planner {
-    width: 50%;
+    width: calc(60% - 3em);
   }
 }
 
 /* ITEM EDITOR  */
-.item__main {
-  overflow: hidden;
-  overflow-y: auto;
-  background:
-    /* Shadow covers */
-    linear-gradient(white 30%, rgba(255,255,255,0)),
-    linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-    /* Shadows */
-    radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
-    radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
-  background:
-    /* Shadow covers */
-    linear-gradient(white 30%, rgba(255,255,255,0)),
-    linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-    /* Shadows */
-    radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
-    radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
-  background-repeat: no-repeat;
-  background-color: white;
-  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
-  
-  /* Opera doesn't support this in the shorthand */
-  background-attachment: local, local, scroll, scroll;
-}
 .item__footer {
   position: sticky;
   bottom: 0;
-  background: #FFF;
+  background: #fff;
   padding: 1em 1.5em;
 }
 
-
 .item {
+  @extend %abs_fill;
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(100, 100, 100, .75);
+  background: rgba(100, 100, 100, 0.75);
 }
 .item__box {
   width: 90vw;
@@ -656,23 +666,19 @@ button {
   overflow: hidden;
   border-radius: 12px;
   &__home {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
+    @extend %abs_fill;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     &__header {
       position: sticky;
       top: 0;
       &__form {
-        color: #fff;
-        background: #222;
-        display: flex;
-        align-items: center;
+        @extend %flex_center;
         justify-content: space-between;
-        padding: .65em 1.5em;
+        padding: 0.65em 1.5em;
+        background: #222;
+        color: #fff;
         &__name {
           width: 100%;
           padding-right: 1em;
@@ -689,12 +695,14 @@ button {
       }
     }
     &__main {
+      @extend %scroll_overflow;
+      margin-bottom: auto;
       padding: 1.25em 1.5em 0;
       select {
         width: 100%;
-        padding: .35em;
+        padding: 0.35em;
         background: transparent;
-        border: 1px solid #DDD;
+        border: 1px solid #ddd;
         box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.03);
       }
     }
@@ -710,8 +718,7 @@ button {
 .item__entries {
   margin-top: 1em;
   &__header {
-    display: flex;
-    align-items: center;
+    @extend %flex_center;
     flex-wrap: wrap;
     justify-content: space-between;
     h3 {
@@ -719,43 +726,41 @@ button {
     }
   }
   &__list {
-    list-style: none;
-    margin: 0 0 1.5em;
-    padding: 0;
+    @extend %list_reset;
+    margin-bottom: 1.5em;
     &__item {
+      @extend %flex_center;
+      justify-content: space-between;
       margin-top: 1.25em;
       border-radius: 5px;
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       &__edit {
-          width: 100%;
-          background: transparent;
-          border-radius: inherit;
-          text-align: left;
-          border: 1px solid #DDD;
-          padding: 1.25em 4.25em 1.25em 1.25em;
-          box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.03);
-          transition: box-shadow .2s ease;
-          &:hover {
-              box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.1);
-          }
-          > span {
-              opacity: 0.3;
-              font-size: 0.8em;
-              white-space: nowrap;
-          }
-          > p {
-            margin: .25em 0 0;
-          }
+        width: 100%;
+        background: transparent;
+        border-radius: inherit;
+        text-align: left;
+        border: 1px solid #ddd;
+        padding: 1.25em 4.25em 1.25em 1.25em;
+        box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.03);
+        transition: box-shadow 0.2s ease;
+        &:hover {
+          box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        > span {
+          opacity: 0.3;
+          font-size: 0.8em;
+          white-space: nowrap;
+        }
+        > p {
+          margin: 0.25em 0 0;
+        }
       }
       &__delete {
-          position: absolute;
-          top: 0;
-          right: 1em;
-          bottom: 0;
-          margin: auto 0;
+        position: absolute;
+        top: 0;
+        right: 1em;
+        bottom: 0;
+        margin: auto 0;
       }
     }
   }
@@ -764,19 +769,19 @@ button {
 /* ENTRY */
 .entry {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  left: 10px;
-  bottom: 10px;
-  background: #FFF;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+  bottom: 12px;
+  background: #fff;
   border-radius: 7px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 0 1em rgba(0, 0, 0, 0.2);
   &__main {
+    @extend %scroll_overflow;
     padding: 1.5em;
-    overflow: auto;
     &__form {
       &__notes {
         width: 100%;
@@ -794,13 +799,5 @@ button {
       margin-left: 0.5em;
     }
   }
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s;
-}
-.fade-enter, 
-.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
 }
 </style>

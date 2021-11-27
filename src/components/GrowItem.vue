@@ -27,14 +27,14 @@
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base.scss';
 .planner__list {
     &__item {
+        @extend %flex_center;
+        justify-content: space-between;
         margin-top: 1.25em;
         border-radius: 5px;
         position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
         &__edit {
             width: 100%;
             background: #FFF;

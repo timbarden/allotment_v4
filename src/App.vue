@@ -46,9 +46,4 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font: 600 3.5em/1.2 "Caveat", sans-serif;
 }
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
 </style>
