@@ -29,6 +29,7 @@
       </div>
     </section>
 
+    <!-- sidebar -->
     <!--<Log v-if="$auth.isAuthenticated" :list="this.arrLogs"> </Log>-->
 
     <transition name="fadeup">
