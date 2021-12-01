@@ -29,7 +29,7 @@
       </div>
     </section>
 
-    <Log v-if="$auth.isAuthenticated" :list="this.arrLogs"> </Log>
+    <!--<Log v-if="$auth.isAuthenticated" :list="this.arrLogs"> </Log>-->
 
     <transition name="fadeup">
       <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
@@ -211,7 +211,7 @@
 
 <script>
 import GrowItem from "../components/GrowItem.vue";
-import Log from "../components/Log";
+//import Log from "../components/Log";
 
 export default {
   data() {
@@ -247,7 +247,7 @@ export default {
   },
   components: {
     GrowItem,
-    Log,
+    //Log,
   },
   methods: {
     groupTitle: function(type) {
