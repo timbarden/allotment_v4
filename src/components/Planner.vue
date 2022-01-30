@@ -520,6 +520,7 @@ export default {
   padding: 4vw;
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   justify-content: space-between;
 }
 /* FORM ELEMENTS */
@@ -616,12 +617,16 @@ button {
 
 /* PLANNER */
 .planner {
-  /*padding: 2em 4vw;*/
+  width: 100%;
   &__header {
     @extend %flex_center;
     justify-content: space-between;
     flex-wrap: wrap;
     padding-bottom: 0.5em;
+    h1 {
+      line-height: 1;
+      margin-bottom: 0.25em;
+    }
   }
   &__title {
     font-size: 1.25em;
@@ -637,7 +642,9 @@ button {
 
 @media screen and (min-width: 900px) {
   .planner {
-    width: calc(60% - 3em);
+    flex: auto;
+    width: auto;
+    margin-right: 2em;
   }
 }
 

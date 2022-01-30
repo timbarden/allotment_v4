@@ -44,6 +44,7 @@ export default {
 
 <style lang="scss" scoped>
 .log {
+  width: 100%;
   margin-top: 2em;
   background: #f3f3f3;
   border-radius: 5px;
@@ -66,10 +67,9 @@ export default {
 
 @media screen and (min-width: 900px) {
   .log {
-    width: calc(40% - 3em);
+    width: 24em;
     min-height: 15em;
     margin-top: 1.15em;
-    align-self: flex-start;
   }
 }
 </style>
