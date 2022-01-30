@@ -31,6 +31,7 @@
 
     <!-- sidebar -->
     <!--<Log v-if="$auth.isAuthenticated" :list="this.arrLogs"> </Log>-->
+    <ToDo v-if="$auth.isAuthenticated" :growList="this.growList"> </ToDo>
 
     <transition name="fadeup">
       <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
@@ -212,7 +213,7 @@
 
 <script>
 import GrowItem from "../components/GrowItem.vue";
-//import Log from "../components/Log";
+import ToDo from "../components/ToDo";
 
 export default {
   data() {
@@ -248,7 +249,7 @@ export default {
   },
   components: {
     GrowItem,
-    //Log,
+    ToDo,
   },
   methods: {
     groupTitle: function(type) {
