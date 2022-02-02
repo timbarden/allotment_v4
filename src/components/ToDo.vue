@@ -4,6 +4,7 @@
     <ol>
       <li v-for="item in toDo" :key="item.id">
         {{ item.name }}
+        <span>({{ entrySuccess(item.entries)}}/{{ item.entries.length }} successes)</span>
       </li>
     </ol>
   </section>
@@ -19,6 +20,12 @@ export default {
     currentMonth: function() {
       var currentDate = new Date();
       return currentDate.getMonth();
+    },
+    entrySuccess(entries) {
+      var entrySuccess = entries.filter(function(entry){
+        return entry.success_yes == "success_yes"
+      });
+      return entrySuccess.length;
     },
   },
   computed: {
@@ -60,6 +67,10 @@ export default {
       padding: 0.45em 0 0.25em;
       &:not(:first-child) {
         border-top: 1px solid #ddd;
+      }
+      span {
+        opacity: .8;
+        font-size: .75em;
       }
     }
   }
