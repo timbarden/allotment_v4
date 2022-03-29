@@ -30,8 +30,18 @@
     </section>
 
     <!-- sidebar -->
-    <!--<Log v-if="$auth.isAuthenticated" :list="this.arrLogs"> </Log>-->
-    <ToDo v-if="$auth.isAuthenticated" :growList="this.growList"> </ToDo>
+    <section class="log" v-if="$auth.isAuthenticated">
+      <h2>Successful sowings<br> this month</h2>
+      <ol>
+        <ToDo 
+          v-for="item in growList"
+          :key="item.id"
+          :name="item.name"
+          :entries="item.entries"
+          @itemShow="itemShow(item.id)"
+        />
+      </ol>
+    </section>
 
     <transition name="fadeup">
       <div class="item" v-if="$auth.isAuthenticated && blnItemOpen">
@@ -591,12 +601,7 @@ fieldset {
   border: none;
 }
 button {
-  font: inherit;
-  border: 0;
-  outline: 0;
-  cursor: pointer;
-  -webkit-appearance: none;
-  -webkit-border-radius: 0;
+  @extend %btn_reset;
   border-radius: 5px;
   padding: 0.45em 0.7em;
   background: #eee;

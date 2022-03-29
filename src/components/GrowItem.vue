@@ -1,8 +1,8 @@
 <template>
     <li class="planner__list__item">
         <button class="planner__list__item__edit" @click="$emit('itemShow')">
-          {{ name }}
-                <span v-if="entries">({{ entries.length }} 
+            {{ name }}
+            <span v-if="entries">({{ entries.length }} 
                 <span v-if="entries.length == 1">entry</span>
                 <span v-else>entries</span>)
             </span>
