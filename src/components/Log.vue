@@ -18,35 +18,3 @@ export default {
   methods: {},
 };
 </script>
-
-<style lang="scss" scoped>
-.log {
-  margin-top: 2em;
-  background: #f3f3f3;
-  border-radius: 5px;
-  padding: 1.5em;
-  ol {
-    margin: 1em 0 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    li {
-      margin: 0.15em 0;
-      padding: 0.45em 0 0.25em;
-      &:not(:first-child) {
-        border-top: 1px solid #ddd;
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 900px) {
-  .log {
-    width: calc(40% - 3em);
-    min-height: 15em;
-    margin-top: 1.15em;
-    align-self: flex-start;
-  }
-}
-</style>

@@ -21,7 +21,6 @@
         },
         props: [ "name", "entries" ],
         methods: {
-        
         }
     }
 </script>
