@@ -30,45 +30,12 @@
     </section>
 
     <!-- sidebar -->
-    <div class="sidebar">
-      <section class="log" v-if="$auth.isAuthenticated">
-        <h2>Sow this month</h2>
-        <ol>
-          <Sowings 
-            v-for="item in growList"
-            :key="item.id"
-            :name="item.name"
-            :entries="item.entries"
-            @itemShow="itemShow(item.id)"
-          />
-        </ol>
-      </section>
-
-      <section class="log" v-if="$auth.isAuthenticated">
-        <h2>Plant out this month</h2>
-        <ol>
-          <PlantOut 
-            v-for="item in growList"
-            :key="item.id"
-            :name="item.name"
-            :entries="item.entries"
-            @itemShow="itemShow(item.id)"
-          />
-        </ol>
-      </section>
-
-      <section class="log" v-if="$auth.isAuthenticated">
-        <h2>Harvests this month</h2>
-        <ol>
-          <Harvests 
-            v-for="item in growList"
-            :key="item.id"
-            :name="item.name"
-            :entries="item.entries"
-            @itemShow="itemShow(item.id)"
-          />
-        </ol>
-      </section>
+    <div class="sidebar" v-if="$auth.isAuthenticated">
+      <ToDoBoard 
+        :growList="growList"
+        :boards="objBoards"
+        :itemShow="itemShow"
+      />
     </div>
 
     <transition name="fadeup">
@@ -251,9 +218,7 @@
 
 <script>
 import GrowItem from "../components/GrowItem.vue";
-import Sowings from "../components/Sowings";
-import PlantOut from "../components/PlantOut";
-import Harvests from "../components/Harvests";
+import ToDoBoard from "../components/ToDoBoard";
 
 export default {
   data() {
@@ -283,15 +248,27 @@ export default {
       intLastId: 0,
       objGroups: {},
       arrGroups: ["Vegetables", "Flowers", "Fruit"],
+      objBoards: [
+        {
+          title: "Sowings",
+          data: "sowdate"
+        },
+        {
+          title: "Plant out",
+          data: "plantdate"
+        },
+        {
+          title: "Harvests",
+          data: "harvestdate"
+        },
+      ],
       arrLogs: [],
       //publicPath: process.env.BASE_URL,
     };
   },
   components: {
     GrowItem,
-    Sowings,
-    PlantOut,
-    Harvests,
+    ToDoBoard,
   },
   methods: {
     groupTitle: function(type) {

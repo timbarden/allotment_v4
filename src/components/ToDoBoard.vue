@@ -1,18 +1,32 @@
 <template>
-   <li v-if="successfulEntriesThisMonth(entries) > 0">
-      <button @click="$emit('itemShow')">
-        {{ name }}
-        <span>({{ entrySuccess(entries)}}/{{ entries.length }} successes)</span>
-      </button>
-    </li>
+    <div> 
+        <section class="log" v-for="board in boards" :key="board.title">
+            <h2>{{ board.title }} this month</h2>
+            <ol>
+                <ToDoBoardItem 
+                  v-for="item in growList"
+                  :key="item.id"
+                  :name="item.name"
+                  :entries="item.entries"
+                  :boardType="board.data"
+                  @itemShow="itemShow(item.id)"
+                />
+            </ol>
+        </section>
+    </div>
 </template>
 
 <script>
+import ToDoBoardItem from "../components/ToDoBoardItem";
+
 export default {
   data() {
     return {};
   },
-  props: [ "name", "entries" ],
+  props: [ "growList", "boards", "itemShow" ],
+  components: {
+    ToDoBoardItem,
+  },
   methods: {
     successfulEntriesThisMonth(entries) {
       var currentDate = new Date(),
