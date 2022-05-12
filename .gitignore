@@ -2,7 +2,7 @@
 node_modules
 /dist
 
-public/db_connect.php
+allotment-diary
 
 .env.development
 .env.production
