@@ -2,7 +2,7 @@
   <main class="main">
     <section class="planner">
       <header class="planner__header">
-        <h1>Allotment Diary</h1>
+        <h1>Allotment Diary : 01</h1>
         <button
           v-if="$auth.isAuthenticated"
           class="btn--sq"
