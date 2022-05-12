@@ -15,14 +15,12 @@ export default {
   props: [ "name", "entries", "boardType" ],
   methods: {
     entryMatchType(entries, boardtype) {
-        console.clear();
-        console.log(this.boardType);
-        var currentDate = new Date(),
-            entriesMatch = entries.filter(function(entry) {
-                var thisDate = new Date(entry[boardtype]);
-                return ((currentDate.getMonth() == thisDate.getMonth()) && (entry.success_yes == "success_yes"));
-            });
-        return entriesMatch.length;
+      var currentDate = new Date(),
+          entriesMatch = entries.filter(function(entry) {
+              var thisDate = new Date(entry[boardtype]);
+              return ((currentDate.getMonth() == thisDate.getMonth()) && (entry.success_yes == "success_yes"));
+          });
+      return entriesMatch.length;
     },
     entrySuccess(entries){
       var entriesSuccessful = entries.filter(function(entry) {

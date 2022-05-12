@@ -1,6 +1,6 @@
 <template>
     <div> 
-        <section class="log" v-for="board in boards" :key="board.title">
+        <section class="log" v-for="board in objBoards" :key="board.title">
             <h2>{{ board.title }} this month</h2>
             <ol>
                 <ToDoBoardItem 
@@ -23,27 +23,13 @@ export default {
   data() {
     return {};
   },
-  props: [ "growList", "boards", "itemShow" ],
   components: {
     ToDoBoardItem,
   },
-  methods: {
-    successfulEntriesThisMonth(entries) {
-      var currentDate = new Date(),
-          entriesThisMonth = entries.filter(function(entry) {
-            var sowDate = new Date(entry.sowdate);
-            return ((currentDate.getMonth() == sowDate.getMonth()) && (entry.success_yes == "success_yes"));
-          });
-      return entriesThisMonth.length;
-    },
-    entrySuccess(entries){
-      var entriesSuccessful = entries.filter(function(entry) {
-        return entry.success_yes == "success_yes";
-      });
-      return entriesSuccessful.length;
-    }
-  },
   computed: {
   },
+  methods: {
+  },
+  props: [ "growList", "objBoards", "itemShow" ],
 };
 </script>

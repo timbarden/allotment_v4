@@ -1,12 +1,13 @@
 <template>
   <div id="app">
-    <Header />
-    <router-view />
+    <Planner />
+    <Error />
   </div>
 </template>
 
 <script>
-import Header from "./components/Header";
+import Error from "./../components/Error";
+import Planner from "./../components/Planner";
 
 export default {
   data() {
@@ -15,14 +16,14 @@ export default {
     };
   },
   components: {
-    Header,
+    Error,
+    Planner,
   },
   methods: {},
 };
 </script>
 
 <style lang="scss">
-@import "@/styles/base.scss";
 * {
   box-sizing: border-box;
 }
@@ -47,31 +48,5 @@ h6 {
 }
 h1 {
   font: 600 3.5em/1.2 "Caveat", sans-serif;
-}
-.header__btns a {
-  display: inline-block;
-  vertical-align: middle;
-  text-decoration: none;
-}
-.header__btns a,
-button {
-  @extend %btn_reset;
-  color: #333;
-  border-radius: 5px;
-  padding: 0.45em 0.7em;
-  background: #eee;
-  transition: background 0.1s ease;
-  &.btn--sq {
-    width: 2em;
-    height: 2em;
-    padding: 0;
-    &:hover {
-      background: #ddd;
-    }
-  }
-  img {
-    width: 1.25em;
-    height: 1.25em;
-  }
 }
 </style>

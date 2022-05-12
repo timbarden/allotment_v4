@@ -31,9 +31,9 @@
 
     <!-- sidebar -->
     <div class="sidebar" v-if="$auth.isAuthenticated">
-      <ToDoBoard 
+      <ToDoBoard
         :growList="growList"
-        :boards="objBoards"
+        :objBoards="objBoards"
         :itemShow="itemShow"
       />
     </div>
@@ -242,6 +242,7 @@ export default {
       blnEntryOpen: false,
       blnEntryNew: false,
       growList: [],
+      userid: null,
       activeItem: {},
       activeEntry: {},
       activeEntries: [],
@@ -251,15 +252,15 @@ export default {
       objBoards: [
         {
           title: "Sowings",
-          data: "sowdate"
+          data: "sowdate",
         },
         {
           title: "Plant out",
-          data: "plantdate"
+          data: "plantdate",
         },
         {
           title: "Harvests",
-          data: "harvestdate"
+          data: "harvestdate",
         },
       ],
       arrLogs: [],
@@ -435,23 +436,30 @@ export default {
       localStorage.setItem("growData", JSON.stringify(objGrowData));
     },
     loadFromDatabase: function() {
-      var username = this.$auth.user.email;
-      username = "timbarden@outlook.com";
-
       var xhr = new XMLHttpRequest();
       xhr.overrideMimeType("application/json");
       xhr.onreadystatechange = () => {
         if (xhr.readyState == 4 && xhr.status == 200) {
-          var strSavedData = xhr.responseText;
-          strSavedData = JSON.parse(strSavedData);
-          this.growList = strSavedData.arrGrowList;
-          strSavedData.arrGrowList.length > 0 &&
-            (this.intLastId = strSavedData.intLastId);
+          var strResponse = xhr.responseText;
+          if (strResponse != "") {
+            var objResponse = JSON.parse(strResponse),
+              objResponseData = JSON.parse(objResponse.data);
+            console.log("objResponse", objResponse);
+            console.log("objResponseData", objResponseData);
+            this.userid = objResponse.userid;
+            this.growList = objResponseData.arrGrowList;
+            if (objResponseData.arrGrowList != undefined) {
+              objResponseData.arrGrowList.length > 0 &&
+                (this.intLastId = objResponseData.intLastId);
+            }
+          }
         }
       };
       xhr.open(
         "GET",
-        process.env.VUE_APP_API_URL + "dataLoad.php?username=" + username,
+        process.env.VUE_APP_API_URL +
+          "dataLoad.php?username=" +
+          this.$auth.user.email,
         true
       );
       xhr.send();
@@ -463,12 +471,16 @@ export default {
         },
         strGrowData = JSON.stringify(objGrowData);
       strGrowData = encodeURIComponent(strGrowData);
+      var strQuery =
+        "username=" + this.$auth.user.email + "&growlist=" + strGrowData;
+      if (this.userid != null) {
+        strQuery = "userid=" + this.userid + "&" + strQuery;
+      }
+      console.log("strQuery", strQuery);
       var xhr = new XMLHttpRequest();
       xhr.open("POST", process.env.VUE_APP_API_URL + "dataSave.php", false);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      xhr.send(
-        "username=" + this.$auth.user.email + "&growlist=" + strGrowData
-      );
+      xhr.send(strQuery);
     },
     formatDate: function(date) {
       if (date) {
@@ -527,6 +539,14 @@ export default {
     },
   },
   mounted() {
+    //console.log(this.$auth.loading);
+    //setInterval(function(){
+    //  console.log(this.$auth.loading);
+    //  if (this.$auth.loading){
+    //    clearInterval(authCheck);
+    //  }
+    //console.log("test");
+    //}, 1000);
     this.loadData(process.env.VUE_APP_DATA);
   },
 };
@@ -608,25 +628,6 @@ fieldset {
 ::-webkit-color-swatch,
 ::-moz-color-swatch {
   border: none;
-}
-button {
-  @extend %btn_reset;
-  border-radius: 5px;
-  padding: 0.45em 0.7em;
-  background: #eee;
-  transition: background 0.1s ease;
-  &.btn--sq {
-    width: 2em;
-    height: 2em;
-    padding: 0;
-    &:hover {
-      background: #ddd;
-    }
-  }
-  img {
-    width: 1.25em;
-    height: 1.25em;
-  }
 }
 
 /* PLANNER */
@@ -826,7 +827,7 @@ button {
 .log {
   width: 100%;
   margin-top: 2em;
-  background: linear-gradient(#f3f3f3, #DDD);
+  background: linear-gradient(#f3f3f3, #ddd);
   border-radius: 5px;
   padding: 1.5em;
   ol {
@@ -836,9 +837,9 @@ button {
     display: flex;
     flex-direction: column;
     &:hover {
-     button {
-      opacity: .5;
-     }
+      button {
+        opacity: 0.5;
+      }
     }
     li {
       margin: 0.15em 0;
@@ -850,14 +851,14 @@ button {
         @extend %btn_reset;
         pointer-events: auto;
         padding: 0.45em 0 0.25em;
-        transition: opacity .2s ease;
+        transition: opacity 0.2s ease;
         &:hover {
           opacity: 1;
         }
       }
       span {
-        opacity: .8;
-        font-size: .75em;
+        opacity: 0.8;
+        font-size: 0.75em;
       }
     }
   }
