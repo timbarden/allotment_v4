@@ -476,12 +476,16 @@ export default {
         strGrowData = JSON.stringify(objGrowData);
       strGrowData = encodeURIComponent(strGrowData);
       var strQuery =
-        "username=" + this.$auth.user.email + "&growlist=" + strGrowData + "&db=" +
-          process.env.VUE_APP_DB +
-          "&dbUser=" +
-          process.env.VUE_APP_DB_USER +
-          "&dbPass=" +
-          process.env.VUE_APP_DB_PASS,
+        "username=" +
+        this.$auth.user.email +
+        "&growlist=" +
+        strGrowData +
+        "&db=" +
+        process.env.VUE_APP_DB +
+        "&dbUser=" +
+        process.env.VUE_APP_DB_USER +
+        "&dbPass=" +
+        process.env.VUE_APP_DB_PASS;
       if (this.userid != null) {
         strQuery = "userid=" + this.userid + "&" + strQuery;
       }
