@@ -2,7 +2,7 @@
   <main class="main">
     <section class="planner">
       <header class="planner__header">
-        <h1>Allotment Diary : 01</h1>
+        <h1>Allotment Diary</h1>
         <button
           v-if="$auth.isAuthenticated"
           class="btn--sq"
@@ -442,6 +442,7 @@ export default {
         if (xhr.readyState == 4 && xhr.status == 200) {
           var strResponse = xhr.responseText;
           if (strResponse != "") {
+            console.log("strResponse", strResponse);
             var objResponse = JSON.parse(strResponse),
               objResponseData = JSON.parse(objResponse.data);
             this.userid = objResponse.userid;

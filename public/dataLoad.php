@@ -1,7 +1,7 @@
 <?php
-$db = $_POST["db"];
-$dbUser = $_POST["dbUser"];
-$dbPass = $_POST["dbPass"];
+$db = $_GET["db"];
+$dbUser = $_GET["dbUser"];
+$dbPass = $_GET["dbPass"];
 
 require ("db_connect.php");
 
