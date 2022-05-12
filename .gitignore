@@ -4,7 +4,8 @@ node_modules
 
 public/db_connect.php
 
-.env
+.env.development
+.env.production
 
 # Log files
 npm-debug.log*
