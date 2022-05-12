@@ -462,7 +462,7 @@ export default {
           process.env.VUE_APP_DB +
           "&dbUser=" +
           process.env.VUE_APP_DB_USER +
-          "&dbUser=" +
+          "&dbPass=" +
           process.env.VUE_APP_DB_PASS,
         true
       );
