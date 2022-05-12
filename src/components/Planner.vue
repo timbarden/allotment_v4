@@ -444,8 +444,6 @@ export default {
           if (strResponse != "") {
             var objResponse = JSON.parse(strResponse),
               objResponseData = JSON.parse(objResponse.data);
-            console.log("objResponse", objResponse);
-            console.log("objResponseData", objResponseData);
             this.userid = objResponse.userid;
             this.growList = objResponseData.arrGrowList;
             if (objResponseData.arrGrowList != undefined) {
@@ -459,7 +457,13 @@ export default {
         "GET",
         process.env.VUE_APP_API_URL +
           "dataLoad.php?username=" +
-          this.$auth.user.email,
+          this.$auth.user.email +
+          "&db=" +
+          process.env.VUE_APP_DB +
+          "&dbUser=" +
+          process.env.VUE_APP_DB_USER +
+          "&dbUser=" +
+          process.env.VUE_APP_DB_PASS,
         true
       );
       xhr.send();
@@ -472,11 +476,15 @@ export default {
         strGrowData = JSON.stringify(objGrowData);
       strGrowData = encodeURIComponent(strGrowData);
       var strQuery =
-        "username=" + this.$auth.user.email + "&growlist=" + strGrowData;
+        "username=" + this.$auth.user.email + "&growlist=" + strGrowData + "&db=" +
+          process.env.VUE_APP_DB +
+          "&dbUser=" +
+          process.env.VUE_APP_DB_USER +
+          "&dbUser=" +
+          process.env.VUE_APP_DB_PASS,
       if (this.userid != null) {
         strQuery = "userid=" + this.userid + "&" + strQuery;
       }
-      console.log("strQuery", strQuery);
       var xhr = new XMLHttpRequest();
       xhr.open("POST", process.env.VUE_APP_API_URL + "dataSave.php", false);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
