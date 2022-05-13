@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
-
+dist
 allotment-diary
 auth_config.json
 .env.development
