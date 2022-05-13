@@ -2,7 +2,8 @@
 node_modules
 dist
 allotment-diary
-s.env.development
+
+.env.development
 .env.production
 
 # Log files
