@@ -2,8 +2,7 @@
 node_modules
 dist
 allotment-diary
-auth_config.json
-.env.development
+s.env.development
 .env.production
 
 # Log files
@@ -21,4 +20,4 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-auth_config.json.env
+auth_config.json
