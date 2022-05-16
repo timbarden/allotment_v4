@@ -1,4 +1,4 @@
-# allotment_v4
+# plotbook
 
 ## Project setup
 ```
