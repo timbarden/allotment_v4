@@ -442,7 +442,6 @@ export default {
         if (xhr.readyState == 4 && xhr.status == 200) {
           var strResponse = xhr.responseText;
           if (strResponse != "") {
-            console.log("strResponse", strResponse);
             var objResponse = JSON.parse(strResponse),
               objResponseData = JSON.parse(objResponse.data);
             this.userid = objResponse.userid;
@@ -458,13 +457,7 @@ export default {
         "GET",
         process.env.VUE_APP_API_URL +
           "dataLoad.php?username=" +
-          this.$auth.user.email +
-          "&db=" +
-          process.env.VUE_APP_DB +
-          "&dbUser=" +
-          process.env.VUE_APP_DB_USER +
-          "&dbPass=" +
-          process.env.VUE_APP_DB_PASS,
+          this.$auth.user.email,
         true
       );
       xhr.send();
@@ -477,16 +470,7 @@ export default {
         strGrowData = JSON.stringify(objGrowData);
       strGrowData = encodeURIComponent(strGrowData);
       var strQuery =
-        "username=" +
-        this.$auth.user.email +
-        "&growlist=" +
-        strGrowData +
-        "&db=" +
-        process.env.VUE_APP_DB +
-        "&dbUser=" +
-        process.env.VUE_APP_DB_USER +
-        "&dbPass=" +
-        process.env.VUE_APP_DB_PASS;
+        "username=" + this.$auth.user.email + "&growlist=" + strGrowData;
       if (this.userid != null) {
         strQuery = "userid=" + this.userid + "&" + strQuery;
       }
@@ -552,14 +536,6 @@ export default {
     },
   },
   mounted() {
-    //console.log(this.$auth.loading);
-    //setInterval(function(){
-    //  console.log(this.$auth.loading);
-    //  if (this.$auth.loading){
-    //    clearInterval(authCheck);
-    //  }
-    //console.log("test");
-    //}, 1000);
     this.loadData(process.env.VUE_APP_DATA);
   },
 };

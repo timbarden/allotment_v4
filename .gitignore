@@ -3,6 +3,7 @@ node_modules
 dist
 allotment-diary
 
+db_connect.php
 .env.development
 .env.production
 

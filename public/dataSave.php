@@ -1,8 +1,4 @@
 <?php
-$db = $_POST["db"];
-$dbUser = $_POST["dbUser"];
-$dbPass = $_POST["dbPass"];
-
 require ("db_connect.php");
 
 $userid = $_POST["userid"];
@@ -24,5 +20,5 @@ if ($con->query($sql) === TRUE) {
 
 mysqli_close($con);
 
-// consider switch to PDO?
+// switch to PDO?
 ?>
