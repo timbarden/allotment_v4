@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h1>Welcome to Allotment Diary</h1>
+    <h1>Welcome to Plotbook</h1>
   </div>
 </template>
 

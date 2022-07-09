@@ -2,7 +2,7 @@
   <main class="main">
     <section class="planner">
       <header class="planner__header">
-        <h1>Allotment Diary</h1>
+        <h1>Plotbook</h1>
         <button
           v-if="$auth.isAuthenticated"
           class="btn--sq"
@@ -25,7 +25,7 @@
       </ul>
 
       <div class="planner__welcome" v-if="!$auth.isAuthenticated">
-        <p>Welcome! You need to log in.</p>
+        <p>Welcome to Plotbook! Please log in.</p>
       </div>
     </section>
 
